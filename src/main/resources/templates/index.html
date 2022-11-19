@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
+
+  <title>给君洋的刷题网</title>
+  <script th:src="@{/js/jquery.min.js}"></script>
+  <script th:src="@{/js/jquery.serializejson.min.js}"></script>
+</head>
+<body>
+
+<!--<p>用户登录</p>-->
+<!--<form action="/user/login">-->
+<!--<input type="text" name="username"/>-->
+<!--<input type="text" name="password"/>-->
+<!--<input type="submit" value="登录"/>-->
+<!--</form>-->
+
+<!--<p>form</p>-->
+<!--<a href="/demo/formstyle">form表单注册/登录样式(验证样式)</a> <br>-->
+<!--<p>echarts</p>-->
+<!--<a href="/demo/echarts">图表展示demo</a> <br>-->
+<!--<a href="/demo/echarts1">图表展示demo1</a> <br>-->
+<!--<a href="/demo/echarts2">图表展示demo2</a> <br>-->
+<!--<a href="/demo/echarts3">图表展示demo3</a> <br>-->
+
+<!--<a href="/demo/test1">测试index</a> <br>-->
+
+
+
+
+
+
+
+
+
+
+<!--
+<div th:text="${session.currentMember}">[...]</div>
+
+<div th:object="${session.currentMember}">
+    <p>欢迎,<span th:text="*{truename}">游客名称</span></p>
+    <p>用户等级:<span th:text="*{member_level}"></span></p>
+</div>
+-->
+
+<a href="math.html" th:href="@{/getQList}">开始做数学题</a> <br>
+<a href="math.html" th:href="@{/getQList?type=addition}">专做加法</a> <br>
+<a href="math.html" th:href="@{/getQList?type=subtraction}">专做减法</a> <br>
+<a href="math.html" th:href="@{/getQList?type=multiplication}">专做乘法</a> <br>
+<a href="math.html" th:href="@{/getQList?type=division}">专做除法</a> <br>
+<a href="math.html" th:href="@{/getQList?type=addWithSub}">专做加减法混合</a> <br>
+<a href="math.html" th:href="@{/getQList?type=mulAndDiv}">专做加乘除法混合</a> <br>
+<a href="math.html" th:href="@{/getQList?type=asmdThanThree}">专做包含加减乘除中至少三种混合的</a> <br>
+
+<hr>
+<hr>
+<hr>
+生成点题出来:
+<form id="generateForm"  method="post">
+  <fieldset>
+    <select name="type"  id="type" class="form-control" required="required" style="width:80;height:50;border-radius:10px">
+      <option value=''>数学题题型</option>
+      <option th:each="map : ${mathType}" th:text="${map.value}" th:value="${map.key}">
+      </option>
+    </select>
+    <br>
+    题目中允许包含的最小数字:(什么叫无穷小量)
+    <input type="number" id="minNumber" name="minNumber" required="required" style="width:80;height:50;border-radius:10px"/> <br>
+    题目中允许包含的最大数字:(什么叫无穷大量)
+    <input type="number" id="maxNumber" name="maxNumber" required="required" style="width:100;height:50;border-radius:10px"/> <br>
+    生成题目数量:(不宜过大，建议10-100)
+    <input type="number" id="size" name="size" required="required" style="width:80;height:50;border-radius:10px"/> <br>
+    <input type="button" id="GENERATE" style="width:100px;height:60px;border-radius:10px" value="生成"/>
+  </fieldset>
+</form
+
+<!--<a href="#" th:href="@{/generateQ?type=addition}">专做加法</a> <br>-->
+<!--<div th:if="${session.currentMember!=null}" th:object="${session.currentMember}">-->
+<!--  <p>欢迎,<span th:text="*{truename}">游客名称</span></p>-->
+<!--  <p>用户等级:<span th:text="*{member_level}"></span></p>-->
+<!--  <p>用户等级:<span th:value="*{member_level}"></span></p>-->
+<!--  <a id="logoutBtn"><u>登出</u></a> <br>-->
+
+<!--  <hr>-->
+<!--  &lt;!&ndash;<p>创建时间:<span th:text="${#calendars.format(*{create_time},'dd MMMM yyyy')}"></span></p>&ndash;&gt;-->
+<!--  <a th:href="@{/data/echarts0}">图表0查看</a> <br>-->
+<!--  <a th:href="@{/data/echarts1}">图表1查看</a> <br>-->
+<!--  <a th:href="@{/data/echarts2}">图表2查看</a> <br>-->
+<!--  <a th:href="@{/data/echarts3}">图表3查看</a> <br>-->
+<!--</div>-->
+
+
+<hr>
+
+
+
+<script th:inline="none">
+    /*拿题 我说呢原来大括号和小括号忘记换了 乐天派加油*/
+    $("#GENERATE").click(generateMathQuestions);
+    function generateMathQuestions(){
+        $.ajax({
+            url:"/generateQ",
+            data: $('#generateForm').serializeJSON(),
+            type:"post",
+            dataType:"JSON",
+            success:function(data){
+               console.log(data);
+              alert(data.msg);
+<!--                window.location.reload();-->
+            }
+        })
+    }
+
+
+
+</script>
+<!--<div th:object="${session.currentMember}!=null">-->
+<!--<p>欢迎,<span th:text="*{truename}">游客名称</span></p>-->
+<!--<p>用户等级:<span th:text="*{member_level}"></span></p>-->
+<!--<p>创建时间:<span th:text="${#calendars.format(*{create_time},'dd MMMM yyyy')}"></span></p>-->
+<!--</div>-->
+
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+spring:
+#  security:
+#    user:
+#      name: zhangjunyang
+#      password: 666666
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: zhangqi1112
+    url: jdbc:mysql://localhost:3306/mathforhim1?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle:10
+      maximum-pool-size:20
+      idle-timeout:500000
+      max-lifetime:540000
+      connection-timeout:60000
+      connection-test-query:SELECT 1
+
+
+
+
+server:
+  port: 8099

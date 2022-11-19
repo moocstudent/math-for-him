@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
+
+    <script>
+<!--    big -->
+    </script>
+    <style>
+        body{text-align:center;}
+        table{magin:auto;}
+    </style>
+<head>
+    <meta charset="UTF-8">
+    <title>数学题</title>
+</head>
+<body>
+<a href="/">
+    返回上一页
+</a>
+
+<table style="border:1px solid black;margin-left:auto;margin-right:auto;">
+    <tr>
+<!--        <th>题号</th>-->
+        <th>题目</th>
+        <th>结果</th>
+        <th></th>
+    </tr>
+    <!--关于理性主义，我先说到这里，因为还有一个重要的问题等着我去解决，那就是实用主义与协调经验主义思想的关系-->
+    <tr th:each="q : ${questions}" >
+<!--        <td th:text="${q.id}"></td>-->
+        <td th:text="${q.question}"></td>
+        <td th:text="${q.answer}"></td>
+
+    </tr>
+</table>
+
+</body>
+</html>
