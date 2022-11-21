@@ -3,7 +3,7 @@
       xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
-
+    <script th:src="@{/js/jquery.min.js}"></script>
     <script>
 <!--    big -->
     </script>
@@ -11,7 +11,6 @@
         body{text-align:center;}
         table{magin:auto;}
     </style>
-<head>
     <meta charset="UTF-8">
     <title>数学题</title>
 </head>
@@ -30,11 +29,37 @@
     <!--关于理性主义，我先说到这里，因为还有一个重要的问题等着我去解决，那就是实用主义与协调经验主义思想的关系-->
     <tr th:each="q : ${questions}" >
 <!--        <td th:text="${q.id}"></td>-->
-        <td th:text="${q.question}"></td>
-        <td th:text="${q.answer}"></td>
-
+        <td th:id="question+${q.id}" th:text="${q.question}"></td>
+        <td th:text="${q.id}" hidden="hidden"></td>
+        <td><input th:id="answerjun+${q.id}" style="width:80;height:50;border-radius:10px" type="number"/></td>
+        <td th:id="answer+${q.id}" th:text="${q.answer}" hidden="hidden"></td>
+        <td><input th:id="confirm+${q.id}" style="width:100px;height:30px;border-radius:10px" type="button" value="确认结果" th:onclick="'javascript:matchResult('+${q.id}+');'"/></td>
     </tr>
 </table>
+
+<script>
+    function matchResult(id){
+        console.log(id); //ok , make a move !
+        var question = $("#question"+id).text(); // ok , keep moving !
+<!--        console.log(question);-->
+        var answerjun = $("#answerjun"+id).val(); // fantastic ! next moving !
+        console.log("answerjun:"+answerjun);
+        var answer = $("#answer"+id).text(); // the last move ...
+        console.log("answer:"+answer);
+        var correctAudio = new Audio('/mp3/correct.mp3');
+        var wrongAudio = new Audio('/mp3/wrong.mp3');
+        if(answerjun==answer){
+            console.log("He is correct!");
+            //playing music and shown the answer !
+            correctAudio.play();
+            $("#answer"+id).show();
+            $("#confirm"+id).hide();
+        }else{
+            console.log("Wrong answer! Sooo sadly!");
+            wrongAudio.play();
+        }
+    }
+</script>
 
 </body>
 </html>
