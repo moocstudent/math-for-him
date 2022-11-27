@@ -20,7 +20,7 @@ public enum QuestionEnums {
     DIV(3,"division","除法"),
     ADD_SUB(4,"addWithSub","加减法混合"),
     MUL_DIV(5,"mulAndDiv","乘除法混合"),
-    ASMD_THREE(6,"asmdThanThree","包含加减乘除中至少三种混合的");
+    ASMD_THREE(6,"asmdThanThree","(暂未支持)包含加减乘除中至少三种混合的");
 
     private Integer index;
     private String code;

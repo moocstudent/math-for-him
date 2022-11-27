@@ -11,7 +11,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: zhangqi1112
     url: jdbc:mysql://localhost:3306/mathforhim1?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: root
+#    username: root
+    username: happy1
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
       minimum-idle:10
@@ -26,3 +27,9 @@ spring:
 
 server:
   port: 8099
+
+aliyun:
+  facerec:
+    regionId: cn-shanghai
+    accessKeyId: LTAI5tLtZSiXoBHpg1osBEX6
+    accessKeySecret: JPOaJJypeV2k3yYTSMJdqCw9ME4bu1

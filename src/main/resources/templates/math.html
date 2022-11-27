@@ -48,7 +48,7 @@
         console.log("answer:"+answer);
         var correctAudio = new Audio('/mp3/correct.mp3');
         var wrongAudio = new Audio('/mp3/wrong.mp3');
-        if(answerjun==answer){
+        if(parseInt(answerjun)==parseInt(answer)){
             console.log("He is correct!");
             //playing music and shown the answer !
             correctAudio.play();

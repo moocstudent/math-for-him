@@ -12,13 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
+
 
 /**
  * 一小步提升
@@ -29,13 +27,14 @@ import java.util.stream.LongStream;
 public class MathQuestionBankImpl implements IMathQuestionBank {
     @Autowired
     private MathQuestionRepository mathQuestionRepository;
+
     @Override
     public Long addQuestion(MathQuestion mathQuestion) {
         MathQuestion save = mathQuestionRepository.save(mathQuestion);
-        if (Objects.isNull(save)){
-            log.error("save error:{}",mathQuestion.getQuestion());
+        if (Objects.isNull(save)) {
+            log.error("save error:{}", mathQuestion.getQuestion());
             return null;
-        }else{
+        } else {
             return save.getId();
         }
     }
@@ -43,75 +42,195 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
     @Override
     public Boolean generateNewQuestions(GenerateQuestionBo generateQuestionBo) {
 
-        Long maxNumber = generateQuestionBo.getMaxNumber();
+        Long maxNumber = generateQuestionBo.getMaxNumber() + 1;
         Long minNumber = generateQuestionBo.getMinNumber();
         String type = generateQuestionBo.getType();
         boolean distinct = generateQuestionBo.isDistinct();
         long size = generateQuestionBo.getSize();
-        log.info("size:{}",size);
-        log.info("distinct:{}",distinct);
-        if (minNumber.equals(maxNumber)){
+        log.info("size:{}", size);
+        log.info("distinct:{}", distinct);
+        if (minNumber.equals(maxNumber)) {
             maxNumber++;
         }
         Random random = new Random();
-        LongStream longs = random.longs(size, minNumber.longValue(), maxNumber.longValue());
+        //一般生成题目用到的数字量会是题目数量的3-4倍,除法可能遇到除不尽的结果所需数字更多些
+        LongStream longs = null;
+        LongStream backupLongs = null;
+        if (type.equals(QuestionEnums.DIV.getCode()) || type.equals(QuestionEnums.MUL_DIV.getCode())) {
+            longs = random.longs(size * 10, minNumber.longValue(), maxNumber.longValue());
+            backupLongs = random.longs(size * 10, minNumber.longValue(), maxNumber.longValue());
+        } else {
+            longs = random.longs(size * 4, minNumber.longValue(), maxNumber.longValue());
+            backupLongs = random.longs(size * 4, minNumber.longValue(), maxNumber.longValue());
+        }
         List<MathQuestion> questions = new ArrayList<>();
+        long[] backupLongsArr = backupLongs.toArray();
         BinaryOperator<Long> longBinaryOperator = (x, y) -> {
-            if (x==null||y==null){
+            if (x == null || y == null) {
                 return y;
             }
             if (type.equals(QuestionEnums.ADD.getCode())) {
-                log.info("x:{},y:{}",x,y);
+                log.info("x:{},y:{}", x, y);
                 long l = x + y;
                 questions.add(MathQuestion.builder().question(x + "+" + y + "=")
-                                .maxLimit(x>y?x: y)
+                        .maxLimit(x > y ? x : y)
                         .answer(l + "").type(QuestionEnums.ADD.getCode()).build());
             } else if (type.equals(QuestionEnums.SUB.getCode())) {
                 if (x > y || x == y) {
                     long l = x - y;
                     questions.add(MathQuestion.builder().question(x + "-" + y + "=")
-                                    .maxLimit(x)
+                            .maxLimit(x)
                             .answer(l + "").type(QuestionEnums.SUB.getCode()).build());
                 } else {
                     long l = y - x;
                     questions.add(MathQuestion.builder().question(y + "-" + x + "=")
-                                    .maxLimit(y)
+                            .maxLimit(y)
                             .answer(l + "").type(QuestionEnums.SUB.getCode()).build());
                 }
             } else if (type.equals(QuestionEnums.MUL.getCode())) {
                 long l = x * y;
                 questions.add(MathQuestion.builder().question(x + "×" + y + "=")
-                                .maxLimit(x>y?x:y)
+                        .maxLimit(x > y ? x : y)
                         .answer(l + "").type(QuestionEnums.MUL.getCode()).build());
             } else if (type.equals(QuestionEnums.DIV.getCode())) {
                 if (x > y || x == y) {
                     if (y == 0) {
                         return y;
                     }
-                    double l = x / y.doubleValue();
-                    questions.add(MathQuestion.builder().question(x + "÷" + y + "=")
+                    Double l = x / y.doubleValue();
+                    log.info("{}",l.toString());
+                    if (!l.isInfinite()) {
+                        if (l.toString().split("[.]")[1].length() < 4) {
+                            Long trans = ifIntegerTransDouble(l);
+                            MathQuestion question = MathQuestion.builder().question(x + "÷" + y + "=")
                                     .maxLimit(x)
-                            .answer(l + "").type(QuestionEnums.DIV.getCode()).build());
+                                    .answer(l + "").type(QuestionEnums.DIV.getCode()).build();
+                            if (trans == null) {
+                                question.setAnswer(l.toString());
+                                questions.add(question);
+                            }else{
+                                question.setAnswer(trans.toString());
+                                questions.add(question);
+                            }
+                        }
+                    }
                 } else {
                     if (x == 0) {
                         return y;
                     }
-                    double l = y / x.doubleValue();
-                    questions.add(MathQuestion.builder().question(y + "÷" + x + "=")
+                    Double l = y / x.doubleValue();
+                    if (!l.isInfinite()) {
+                        if (l.toString().split("[.]")[1].length() < 4) {
+                            Long trans = ifIntegerTransDouble(l);
+                            MathQuestion question = MathQuestion.builder().question(y + "÷" + x + "=")
                                     .maxLimit(y)
-                            .answer(l + "").type(QuestionEnums.DIV.getCode()).build());
+                                    .answer(l + "").type(QuestionEnums.DIV.getCode()).build();
+                            if (trans == null) {
+                                question.setAnswer(l.toString());
+                                questions.add(question);
+                            }else{
+                                question.setAnswer(trans.toString());
+                                questions.add(question);
+                            }
+                        }
+                    }
+                }
+            } else if (type.equals(QuestionEnums.ADD_SUB.getCode())) {
+                long z = backupLongsArr[new Random().nextInt(backupLongsArr.length)];
+                int rand = new Random().nextInt(10);
+                if (rand % 2 == 0 && rand > 5) {
+                    long l = x + y - z;
+                    questions.add(MathQuestion.builder().question(x + "+" + y + "-" + z + "=")
+                            .maxLimit(x)
+                            .answer(l + "").type(QuestionEnums.ADD_SUB.getCode()).build());
+                } else if (rand % 2 == 0 && rand <= 5) {
+                    long l = x - y + z;
+                    questions.add(MathQuestion.builder().question(x + "-" + y + "+" + z + "=")
+                            .maxLimit(x)
+                            .answer(l + "").type(QuestionEnums.ADD_SUB.getCode()).build());
+                } else if (rand % 2 == 1 && rand > 5) {
+                    long l = x + y + z;
+                    questions.add(MathQuestion.builder().question(x + "+" + y + "+" + z + "=")
+                            .maxLimit(x)
+                            .answer(l + "").type(QuestionEnums.ADD_SUB.getCode()).build());
+                } else if (rand % 2 == 1 && rand <= 5) {
+                    long l = x - y - z;
+                    questions.add(MathQuestion.builder().question(x + "-" + y + "-" + z + "=")
+                            .maxLimit(x)
+                            .answer(l + "").type(QuestionEnums.ADD_SUB.getCode()).build());
+                }
+
+            } else if (type.equals(QuestionEnums.MUL_DIV.getCode())) {
+                Long z = backupLongsArr[new Random().nextInt(backupLongsArr.length)];
+                int rand = new Random().nextInt(10);
+                log.info("mul_div rand:{}", rand);
+                if (rand % 2 == 0 && rand > 5) {
+                    Double l = x * y / z.doubleValue();
+                    if (!l.isInfinite()) {
+                        if (l.toString().split("[.]")[1].length() < 4) {
+                            Long trans = ifIntegerTransDouble(l);
+                            MathQuestion question = MathQuestion.builder().question(x + "×" + y + "÷" + z + "=")
+                                    .maxLimit(x)
+                                    .answer(l + "").type(QuestionEnums.MUL_DIV.getCode()).build();
+                            if (trans == null) {
+                                question.setAnswer(l.toString());
+                                questions.add(question);
+                            }else{
+                                question.setAnswer(trans.toString());
+                                questions.add(question);
+                            }
+                        }
+                    }
+                } else if (rand % 2 == 0 && rand <= 5) {
+                    Double l = x / y.doubleValue() * z;
+                    if (!l.isInfinite()) {
+                        if (l.toString().split("[.]")[1].length() < 4) {
+                            Long trans = ifIntegerTransDouble(l);
+                            MathQuestion question = MathQuestion.builder().question(x + "÷" + y + "×" + z + "=")
+                                    .maxLimit(x)
+                                    .type(QuestionEnums.MUL_DIV.getCode()).build();
+                            if (trans == null) {
+                                question.setAnswer(l.toString());
+                                questions.add(question);
+                            }else{
+                                question.setAnswer(trans.toString());
+                                questions.add(question);
+                            }
+                        }
+                    }
+                } else if (rand % 2 == 1 && rand > 5) {
+                    long l = x * y * z;
+                    questions.add(MathQuestion.builder().question(x + "×" + y + "×" + z + "=")
+                            .maxLimit(x)
+                            .answer(l + "").type(QuestionEnums.MUL_DIV.getCode()).build());
+                } else if (rand % 2 == 1 && rand <= 5) {
+                    Double l = x / y.doubleValue() / z.doubleValue();
+                    if (!l.isInfinite()) {
+                        if (l.toString().split("[.]")[1].length() < 4) {
+                            Long trans = ifIntegerTransDouble(l);
+                            MathQuestion question = MathQuestion.builder().question(x + "÷" + y + "÷" + z + "=")
+                                    .maxLimit(x)
+                                    .type(QuestionEnums.MUL_DIV.getCode()).build();
+                            if (trans == null) {
+                                question.setAnswer(l.toString());
+                                questions.add(question);
+                            }else{
+                                question.setAnswer(trans.toString());
+                                questions.add(question);
+                            }
+                        }
+                    }
                 }
             }
             return y;
         };
-
-        if (distinct){
-             longs.distinct().boxed().reduce(longBinaryOperator).orElse(null);
-        }else {
-             longs.boxed().reduce(longBinaryOperator).orElse(null);
+        if (distinct) {
+            longs.distinct().boxed().reduce(longBinaryOperator).orElse(null);
+        } else {
+            longs.boxed().reduce(longBinaryOperator).orElse(null);
         }
-
-        Iterable<MathQuestion> mathQuestions = mathQuestionRepository.saveAll(questions);
+        List<MathQuestion> matchSizeQs = questions.subList(0, Integer.valueOf(size + ""));
+        Iterable<MathQuestion> mathQuestions = mathQuestionRepository.saveAll(matchSizeQs);
         return true;
     }
 
@@ -121,4 +240,16 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
                 getQuestionsBo.getMaxLimit(), getQuestionsBo.getSize());
         return randQuestions;
     }
+
+
+    private Long ifIntegerTransDouble(Double v) {
+        if (v.toString().split("[.]")[1].length() == 1 && v.toString().split("[.]")[1].equals("0")) {
+            return Long.parseLong(v.toString().split("[.]")[0]);
+        }
+        return null;
+    }
+//
+//    public static void main(String[] args) {
+//        System.out.println("0.1".split("[.]").length);
+//    }
 }
