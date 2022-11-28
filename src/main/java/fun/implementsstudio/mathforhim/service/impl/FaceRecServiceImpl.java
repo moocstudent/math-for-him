@@ -1,6 +1,15 @@
 package fun.implementsstudio.mathforhim.service.impl;
 
-import com.aliyun.facebody20191230.models.*;
+import com.aliyun.facebody20191230.models.AddFaceEntityRequest;
+import com.aliyun.facebody20191230.models.AddFaceEntityResponse;
+import com.aliyun.facebody20191230.models.AddFaceRequest;
+import com.aliyun.facebody20191230.models.AddFaceResponse;
+import com.aliyun.facebody20191230.models.CompareFaceRequest;
+import com.aliyun.facebody20191230.models.CompareFaceResponse;
+import com.aliyun.facebody20191230.models.CreateFaceDbRequest;
+import com.aliyun.facebody20191230.models.CreateFaceDbResponse;
+import com.aliyun.facebody20191230.models.SearchFaceRequest;
+import com.aliyun.facebody20191230.models.SearchFaceResponse;
 import com.aliyun.tea.TeaException;
 import fun.implementsstudio.mathforhim.service.IFaceRecService;
 import lombok.extern.slf4j.Slf4j;
