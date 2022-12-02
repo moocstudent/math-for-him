@@ -17,4 +17,6 @@ public class GenerateQuestionBo {
     private boolean distinct;
     //generate number's size
     private long size;
+    //是否允许生成结果为负数
+    private boolean containsNegative;
 }

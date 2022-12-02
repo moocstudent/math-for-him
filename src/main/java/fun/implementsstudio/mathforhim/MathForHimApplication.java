@@ -36,60 +36,65 @@ import java.util.stream.Collectors;
 @EnableJpaRepositories
 public class MathForHimApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MathForHimApplication.class, args);
-	}
-	@Autowired
-	private IMathQuestionBank mathQuestionBank;
-	@GetMapping("/name")
-	@ResponseBody
-	public BaseResult test(){
-		return BaseResult.builder().msg("zhangjunyang").build();
-	}
-	/**
-	 * creation
-	 * 创建一些题出来
-	 */
-	@PostMapping("/generateQ")
-	@ResponseBody
-	public BaseResult generateNewQuestions(GenerateQuestionBo generateQuestionBo){
-		log.info("开始生成数学题:{}",generateQuestionBo);
-		Boolean success = mathQuestionBank.generateNewQuestions(generateQuestionBo);
-		return BaseResult.builder().code(1).data(mathQuestionBank.generateNewQuestions(generateQuestionBo))
-				.msg(success?"生成了"+
-						QuestionEnums.getDescByCode(generateQuestionBo.getType())
-								+"类型的、介于【"+generateQuestionBo.getMinNumber()+"与"+generateQuestionBo.getMaxNumber()+"】之间数学题"
-								+generateQuestionBo.getSize()+"道。":"").build();
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MathForHimApplication.class, args);
+    }
 
-	@GetMapping("/getQ")
-	@ResponseBody
-	public BaseResult getQuestions(GetQuestionsBo getQuestionsBo){
-		return BaseResult.builder().data(mathQuestionBank.getQuestions(getQuestionsBo)).code(1).build();
-	}
+    @Autowired
+    private IMathQuestionBank mathQuestionBank;
 
-	/**
-	 * 点外卖吃烧鸡 再来一个选择题
-	 * @param model
-	 * @param getQuestionsBo
-	 * @return
-	 */
-	@GetMapping("/getQList")
-	public String getQuestionsView(Model model, GetQuestionsBo getQuestionsBo){
-		List<MathQuestion> questions = mathQuestionBank.getQuestions(getQuestionsBo);
-		model.addAttribute("questions",questions);
-		return "math";
-	}
-	@GetMapping(value = {"/",""})
-	public String index(Model model){
-		Map<String, String> map = Arrays.stream(QuestionEnums.values())
-				//map 排序，index白加了
-				.collect(Collectors.toMap(QuestionEnums::getCode, QuestionEnums::getDesc,
-						(k1, k2) -> k1, LinkedHashMap::new));
-		model.addAttribute("mathType", map);
-		return "index";
-	}
+    @GetMapping("/name")
+    @ResponseBody
+    public BaseResult test() {
+        return BaseResult.builder().msg("zhangjunyang").build();
+    }
 
+    /**
+     * creation
+     * 创建一些题出来
+     */
+    @PostMapping("/generateQ")
+    @ResponseBody
+    public BaseResult generateNewQuestions(GenerateQuestionBo generateQuestionBo) {
+        log.info("开始生成数学题:{}", generateQuestionBo);
+        Boolean success = mathQuestionBank.generateNewQuestions(generateQuestionBo);
+        return BaseResult.builder().code(1).data(mathQuestionBank.generateNewQuestions(generateQuestionBo))
+                .msg(success ? "生成了" +
+                        QuestionEnums.getDescByCode(generateQuestionBo.getType())
+                        + "类型的、介于【" + generateQuestionBo.getMinNumber() + "与" + generateQuestionBo.getMaxNumber() + "】之间数学题"
+                        + generateQuestionBo.getSize() + "道，结果" + (generateQuestionBo.isContainsNegative() ?
+                        "允许" : "不允许") + "出现负数。" : "").build();
+    }
+
+    @GetMapping("/getQ")
+    @ResponseBody
+    public BaseResult getQuestions(GetQuestionsBo getQuestionsBo) {
+        return BaseResult.builder().data(mathQuestionBank.getQuestions(getQuestionsBo)).code(1).build();
+    }
+
+    /**
+     * 点外卖吃烧鸡 再来一个选择题
+     *
+     * @param model
+     * @param getQuestionsBo
+     * @return
+     */
+    @GetMapping("/getQList")
+    public String getQuestionsView(Model model, GetQuestionsBo getQuestionsBo) {
+        List<MathQuestion> questions = mathQuestionBank.getQuestions(getQuestionsBo);
+        model.addAttribute("questions", questions);
+        return "math";
+    }
+
+    @GetMapping(value = {"/", ""})
+    public String index(Model model) {
+        Map<String, String> map = Arrays.stream(QuestionEnums.values())
+                //map 排序，index白加了
+                .collect(Collectors.toMap(QuestionEnums::getCode, QuestionEnums::getDesc,
+                        (k1, k2) -> k1, LinkedHashMap::new));
+        model.addAttribute("mathType", map);
+        return "index";
+    }
 
 
 }

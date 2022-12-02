@@ -6,11 +6,9 @@ import fun.implementsstudio.mathforhim.dao.MathQuestionRepository;
 import fun.implementsstudio.mathforhim.entity.MathQuestion;
 import fun.implementsstudio.mathforhim.enums.QuestionEnums;
 import fun.implementsstudio.mathforhim.service.IMathQuestionBank;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +42,10 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
 
     @Override
     public Boolean generateNewQuestions(GenerateQuestionBo generateQuestionBo) {
-
         Long maxNumber = generateQuestionBo.getMaxNumber() + 1;
         Long minNumber = generateQuestionBo.getMinNumber();
         String type = generateQuestionBo.getType();
+        boolean containsNegative = generateQuestionBo.isContainsNegative();
         boolean distinct = generateQuestionBo.isDistinct();
         long size = generateQuestionBo.getSize();
         log.info("size:{}", size);
@@ -73,19 +71,19 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
                 return y;
             }
             if (type.equals(QuestionEnums.ADD.getCode())) {
-                return add(x, y, questions);
+                return add(x, y, questions,containsNegative);
             } else if (type.equals(QuestionEnums.SUB.getCode())) {
-                return sub(x, y, questions);
+                return sub(x, y, questions,containsNegative);
             } else if (type.equals(QuestionEnums.MUL.getCode())) {
-                return mul(x, y, questions);
+                return mul(x, y, questions,containsNegative);
             } else if (type.equals(QuestionEnums.DIV.getCode())) {
-                return div(x, y, questions);
+                return div(x, y, questions,containsNegative);
             } else if (type.equals(QuestionEnums.ADD_SUB.getCode())) {
-                return add_sub(x, y, questions, backupLongsArr);
+                return add_sub(x, y, questions, backupLongsArr,containsNegative);
             } else if (type.equals(QuestionEnums.MUL_DIV.getCode())) {
-                return mul_div(x, y, questions, backupLongsArr);
+                return mul_div(x, y, questions, backupLongsArr,containsNegative);
             } else if (type.equals(QuestionEnums.ASMD_THREE.getCode())) {
-                return asmd_three(x, y, questions, backupLongsArr);
+                return asmd_three(x, y, questions, backupLongsArr,containsNegative);
             }
             return y;
         };
@@ -106,23 +104,32 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
         return randQuestions;
     }
 
-    private Long add(Long x, Long y, List<MathQuestion> questions) {
+    private Long add(Long x, Long y, List<MathQuestion> questions,boolean containsNegative) {
         log.info("x:{},y:{}", x, y);
         long l = x + y;
+        if (!containsNegative && l<0){
+            return y;
+        }
         questions.add(MathQuestion.builder().question(x + "+" + y + "=")
                 .maxLimit(x > y ? x : y)
                 .answer(l + "").type(QuestionEnums.ADD.getCode()).build());
         return y;
     }
 
-    private Long sub(Long x, Long y, List<MathQuestion> questions) {
+    private Long sub(Long x, Long y, List<MathQuestion> questions,boolean containsNegative) {
         if (x > y || x == y) {
             long l = x - y;
+            if (!containsNegative && l<0){
+                return y;
+            }
             questions.add(MathQuestion.builder().question(x + "-" + y + "=")
                     .maxLimit(x)
                     .answer(l + "").type(QuestionEnums.SUB.getCode()).build());
         } else {
             long l = y - x;
+            if (!containsNegative && l<0){
+                return y;
+            }
             questions.add(MathQuestion.builder().question(y + "-" + x + "=")
                     .maxLimit(y)
                     .answer(l + "").type(QuestionEnums.SUB.getCode()).build());
@@ -130,26 +137,38 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
         return y;
     }
 
-    private Long add_sub(Long x, Long y, List<MathQuestion> questions, long[] backupLongsArr) {
+    private Long add_sub(Long x, Long y, List<MathQuestion> questions, long[] backupLongsArr,boolean containsNegative) {
         long z = backupLongsArr[new Random().nextInt(backupLongsArr.length)];
         int rand = new Random().nextInt(10);
         if (rand % 2 == 0 && rand > 5) {
             long l = x + y - z;
+            if (!containsNegative && l<0){
+                return y;
+            }
             questions.add(MathQuestion.builder().question(x + "+" + y + "-" + z + "=")
                     .maxLimit(x)
                     .answer(l + "").type(QuestionEnums.ADD_SUB.getCode()).build());
         } else if (rand % 2 == 0 && rand <= 5) {
             long l = x - y + z;
+            if (!containsNegative && l<0){
+                return y;
+            }
             questions.add(MathQuestion.builder().question(x + "-" + y + "+" + z + "=")
                     .maxLimit(x)
                     .answer(l + "").type(QuestionEnums.ADD_SUB.getCode()).build());
         } else if (rand % 2 == 1 && rand > 5) {
             long l = x + y + z;
+            if (!containsNegative && l<0){
+                return y;
+            }
             questions.add(MathQuestion.builder().question(x + "+" + y + "+" + z + "=")
                     .maxLimit(x)
                     .answer(l + "").type(QuestionEnums.ADD_SUB.getCode()).build());
         } else if (rand % 2 == 1 && rand <= 5) {
             long l = x - y - z;
+            if (!containsNegative && l<0){
+                return y;
+            }
             questions.add(MathQuestion.builder().question(x + "-" + y + "-" + z + "=")
                     .maxLimit(x)
                     .answer(l + "").type(QuestionEnums.ADD_SUB.getCode()).build());
@@ -157,20 +176,26 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
         return y;
     }
 
-    private Long mul(Long x, Long y, List<MathQuestion> questions) {
+    private Long mul(Long x, Long y, List<MathQuestion> questions,boolean containsNegative) {
         long l = x * y;
+        if (!containsNegative && l<0){
+            return y;
+        }
         questions.add(MathQuestion.builder().question(x + "×" + y + "=")
                 .maxLimit(x > y ? x : y)
                 .answer(l + "").type(QuestionEnums.MUL.getCode()).build());
         return y;
     }
 
-    private Long div(Long x, Long y, List<MathQuestion> questions) {
+    private Long div(Long x, Long y, List<MathQuestion> questions,boolean containsNegative) {
         if (x > y || x == y) {
             if (y == 0) {
                 return y;
             }
             Double l = x / y.doubleValue();
+            if (!containsNegative && l<0){
+                return y;
+            }
             log.info("{}", l.toString());
             if (!l.isInfinite()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
@@ -192,6 +217,9 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
                 return y;
             }
             Double l = y / x.doubleValue();
+            if (!containsNegative && l<0){
+                return y;
+            }
             if (!l.isInfinite()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
@@ -211,12 +239,15 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
         return y;
     }
 
-    private Long mul_div(Long x, Long y, List<MathQuestion> questions, long[] backupLongsArr) {
+    private Long mul_div(Long x, Long y, List<MathQuestion> questions, long[] backupLongsArr,boolean containsNegative) {
         Long z = backupLongsArr[new Random().nextInt(backupLongsArr.length)];
         int rand = new Random().nextInt(10);
         log.info("mul_div rand:{}", rand);
         if (rand % 2 == 0 && rand > 5) {
             Double l = x * y / z.doubleValue();
+            if (!containsNegative && l<0){
+                return y;
+            }
             if (!l.isInfinite()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
@@ -234,6 +265,9 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             }
         } else if (rand % 2 == 0 && rand <= 5) {
             Double l = x / y.doubleValue() * z;
+            if (!containsNegative && l<0){
+                return y;
+            }
             if (!l.isInfinite()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
@@ -251,11 +285,17 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             }
         } else if (rand % 2 == 1 && rand > 5) {
             long l = x * y * z;
+            if (!containsNegative && l<0){
+                return y;
+            }
             questions.add(MathQuestion.builder().question(x + "×" + y + "×" + z + "=")
                     .maxLimit(x)
                     .answer(l + "").type(QuestionEnums.MUL_DIV.getCode()).build());
         } else if (rand % 2 == 1 && rand <= 5) {
             Double l = x / y.doubleValue() / z.doubleValue();
+            if (!containsNegative && l<0){
+                return y;
+            }
             if (!l.isInfinite()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
@@ -275,12 +315,15 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
         return y;
     }
 
-    private Long asmd_three(Long x, Long y, List<MathQuestion> questions, long[] backupLongsArr) {
+    private Long asmd_three(Long x, Long y, List<MathQuestion> questions, long[] backupLongsArr,boolean containsNegative) {
         Long z = backupLongsArr[new Random().nextInt(backupLongsArr.length)];
         Long k = backupLongsArr[new Random().nextInt(backupLongsArr.length)];
         int rand = new Random().nextInt(20);
         if (rand % 2 == 0 && rand > 5 && rand < 10) {
             Double l = x * y / z.doubleValue() + k;
+            if (!containsNegative && l<0){
+                return y;
+            }
             if (!l.isInfinite()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
@@ -299,6 +342,9 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             }
         } else if (rand % 2 == 0 && rand <= 5) {
             Double l = x / y.doubleValue() - k * z;
+            if (!containsNegative && l<0){
+                return y;
+            }
             if (!l.isInfinite()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
@@ -317,6 +363,9 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             }
         } else if (rand % 2 == 1 && rand > 5 && rand < 10) {
             Double l = x + y / z.doubleValue() - k;
+            if (!containsNegative && l<0){
+                return y;
+            }
             if (!l.isInfinite()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
@@ -335,6 +384,9 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             }
         } else if (rand % 2 == 1 && rand <= 5) {
             Double l = x / y.doubleValue() * z + k;
+            if (!containsNegative && l<0){
+                return y;
+            }
             if (!l.isInfinite()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
@@ -353,11 +405,17 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             }
         } else if (rand % 2 == 0 && rand >= 10 && rand < 15) {
             long l = x - y + z * k;
+            if (!containsNegative && l<0){
+                return y;
+            }
             questions.add(MathQuestion.builder().question(x + "-" + y + "+" + z + "×" + k + "=")
                     .maxLimit(x)
                     .answer(l + "").type(QuestionEnums.ASMD_THREE.getCode()).build());
         }else if(rand%2==1 && rand>=10 && rand <15){
             Double l = x - y * z / k.doubleValue();
+            if (!containsNegative && l<0){
+                return y;
+            }
             if (!l.isInfinite()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
@@ -376,11 +434,17 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             }
         }else if(rand%2==0 && rand>=15 && rand <20){
             long l = x + y - k * z;
+            if (!containsNegative && l<0){
+                return y;
+            }
             questions.add(MathQuestion.builder().question(x + "+" + y + "-" + k + "×" + z + "=")
                     .maxLimit(x)
                     .answer(l + "").type(QuestionEnums.ASMD_THREE.getCode()).build());
         }else {
             long l = x * y - k + z;
+            if (!containsNegative && l<0){
+                return y;
+            }
             questions.add(MathQuestion.builder().question(x + "×" + y + "-" + k + "+" + z + "=")
                     .maxLimit(x)
                     .answer(l + "").type(QuestionEnums.ASMD_THREE.getCode()).build());
