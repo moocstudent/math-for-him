@@ -2,14 +2,21 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes"/>
     <script th:src="@{/js/jquery.min.js}"></script>
     <script>
 <!--    big -->
+
+
+
     </script>
     <style>
         body{text-align:center;}
         table{magin:auto;}
+
+
+
     </style>
     <meta charset="UTF-8">
     <title>数学题</title>
@@ -18,26 +25,57 @@
 <a href="/">
     返回上一页
 </a>
-
+<input id="maxLimitAdjust" type="number" style="width:50px;height:20px;border-radius:10px"/>
+<input id="maxLimitAdjustBtn" type="button" value="最大数值区间调整"/>
 <table style="border:1px solid black;margin-left:auto;margin-right:auto;">
     <tr>
-<!--        <th>题号</th>-->
+        <!--        <th>题号</th>-->
         <th>题目</th>
         <th>结果</th>
         <th></th>
     </tr>
     <!--关于理性主义，我先说到这里，因为还有一个重要的问题等着我去解决，那就是实用主义与协调经验主义思想的关系-->
-    <tr th:each="q : ${questions}" >
-<!--        <td th:text="${q.id}"></td>-->
+    <tr th:each="q : ${questions}">
+        <!--        <td th:text="${q.id}"></td>-->
         <td th:id="question+${q.id}" th:text="${q.question}"></td>
         <td th:text="${q.id}" hidden="hidden"></td>
         <td><input th:id="answerjun+${q.id}" style="width:80;height:50;border-radius:10px" type="number"/></td>
         <td th:id="answer+${q.id}" th:text="${q.answer}" hidden="hidden"></td>
-        <td><input th:id="confirm+${q.id}" style="width:100px;height:30px;border-radius:10px" type="button" value="确认结果" th:onclick="'javascript:matchResult('+${q.id}+');'"/></td>
+        <td><input th:id="confirm+${q.id}" style="width:100px;height:30px;border-radius:10px" type="button" value="确认结果"
+                   th:onclick="'javascript:matchResult('+${q.id}+');'"/></td>
     </tr>
 </table>
 
 <script>
+    $('#maxLimitAdjustBtn').click(maxLimitAdjustFc);
+    function maxLimitAdjustFc(){
+        console.log('adjustment max limit number of question members')
+        var adjust = $('#maxLimitAdjust').val();
+        if(!adjust){
+            alert('请输入要调整的数值');
+            $('#maxLimitAdjust').focus();
+        }else{
+            window.location = changeURLPar(window.location.href,'maxLimit',adjust);
+        }
+    }
+　   function changeURLPar(destiny, par, par_value) {
+            var pattern = par + '=([^&]*)';
+            var replaceText = par + '=' + par_value;
+            if (destiny.match(pattern)) {
+                var tmp = '/' + par + '=[^&]*/';
+                tmp = destiny.replace(eval(tmp), replaceText);
+                return (tmp);
+            }
+            else {
+                if (destiny.match('[?]')) {
+                    return destiny + '&' + replaceText;
+                }
+                else {
+                    return destiny + '?' + replaceText;
+                }
+            }
+            return destiny + par +  par_value;
+        }
     function matchResult(id){
         console.log(id); //ok , make a move !
         var question = $("#question"+id).text(); // ok , keep moving !
@@ -59,6 +97,9 @@
             wrongAudio.play();
         }
     }
+
+
+
 </script>
 
 </body>
