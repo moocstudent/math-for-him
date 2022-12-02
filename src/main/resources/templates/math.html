@@ -27,6 +27,15 @@
 </a>
 <input id="maxLimitAdjust" type="number" style="width:50px;height:20px;border-radius:10px"/>
 <input id="maxLimitAdjustBtn" type="button" value="最大数值区间调整"/>
+
+
+<select name="answerNegative"  id="answerNegative"  style="width:80;height:50;border-radius:10px">
+    <option value='0'>选择结果正或负数</option>
+    <option value="0">结果包括正和负数</option>
+    <option value="1">只做正数结果题目</option>
+    <option value="2">只做负数结果题目</option>
+</select>
+
 <table style="border:1px solid black;margin-left:auto;margin-right:auto;">
     <tr>
         <!--        <th>题号</th>-->
@@ -47,9 +56,19 @@
 </table>
 
 <script>
+    $('#answerNegative').change(negativeSelect);
+    function negativeSelect(){
+         console.log('select negative or not in answers.');
+         var negativeSet = $('#answerNegative').val();
+         if(!negativeSet){
+        }else{
+            window.location = changeURLPar(window.location.href,'answerNegative',negativeSet);
+        }
+
+    }
     $('#maxLimitAdjustBtn').click(maxLimitAdjustFc);
     function maxLimitAdjustFc(){
-        console.log('adjustment max limit number of question members')
+        console.log('adjustment max limit number of question members');
         var adjust = $('#maxLimitAdjust').val();
         if(!adjust){
             alert('请输入要调整的数值');

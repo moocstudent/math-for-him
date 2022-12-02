@@ -10,10 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -99,9 +96,8 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
 
     @Override
     public List<MathQuestion> getQuestions(GetQuestionsBo getQuestionsBo) {
-        List<MathQuestion> randQuestions = mathQuestionRepository.findByConditions(getQuestionsBo.getType(),
-                getQuestionsBo.getMaxLimit(), getQuestionsBo.getSize());
-        return randQuestions;
+        return mathQuestionRepository.findByConditions2(getQuestionsBo.getType(),
+                getQuestionsBo.getMaxLimit(), getQuestionsBo.getSize(),getQuestionsBo.getAnswerNegative());
     }
 
     private Long add(Long x, Long y, List<MathQuestion> questions,boolean containsNegative) {
@@ -110,30 +106,20 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
         if (!containsNegative && l<0){
             return y;
         }
-        questions.add(MathQuestion.builder().question(x + "+" + y + "=")
-                .maxLimit(x > y ? x : y)
+        questions.add(MathQuestion.builder().question(x + "+" + (y<0?"("+y+")":y) + "=")
+                .maxLimit(Math.abs(x) > Math.abs(y) ? x : y)
                 .answer(l + "").type(QuestionEnums.ADD.getCode()).build());
         return y;
     }
 
     private Long sub(Long x, Long y, List<MathQuestion> questions,boolean containsNegative) {
-        if (x > y || x == y) {
             long l = x - y;
             if (!containsNegative && l<0){
                 return y;
             }
-            questions.add(MathQuestion.builder().question(x + "-" + y + "=")
-                    .maxLimit(x)
+            questions.add(MathQuestion.builder().question(x + "-" + (y<0?"("+y+")":y)  + "=")
+                    .maxLimit(Math.abs(x) > Math.abs(y) ? x : y)
                     .answer(l + "").type(QuestionEnums.SUB.getCode()).build());
-        } else {
-            long l = y - x;
-            if (!containsNegative && l<0){
-                return y;
-            }
-            questions.add(MathQuestion.builder().question(y + "-" + x + "=")
-                    .maxLimit(y)
-                    .answer(l + "").type(QuestionEnums.SUB.getCode()).build());
-        }
         return y;
     }
 
@@ -145,32 +131,32 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             if (!containsNegative && l<0){
                 return y;
             }
-            questions.add(MathQuestion.builder().question(x + "+" + y + "-" + z + "=")
-                    .maxLimit(x)
+            questions.add(MathQuestion.builder().question(x + "+" + (y<0?"("+y+")":y) + "-" + (z<0?"("+z+")":z) + "=")
+                    .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y))))
                     .answer(l + "").type(QuestionEnums.ADD_SUB.getCode()).build());
         } else if (rand % 2 == 0 && rand <= 5) {
             long l = x - y + z;
             if (!containsNegative && l<0){
                 return y;
             }
-            questions.add(MathQuestion.builder().question(x + "-" + y + "+" + z + "=")
-                    .maxLimit(x)
+            questions.add(MathQuestion.builder().question(x + "-" + (y<0?"("+y+")":y)  + "+" + (z<0?"("+z+")":z)  + "=")
+                    .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y))))
                     .answer(l + "").type(QuestionEnums.ADD_SUB.getCode()).build());
         } else if (rand % 2 == 1 && rand > 5) {
             long l = x + y + z;
             if (!containsNegative && l<0){
                 return y;
             }
-            questions.add(MathQuestion.builder().question(x + "+" + y + "+" + z + "=")
-                    .maxLimit(x)
+            questions.add(MathQuestion.builder().question(x + "+" + (y<0?"("+y+")":y)  + "+" + (z<0?"("+z+")":z)+ "=")
+                    .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y))))
                     .answer(l + "").type(QuestionEnums.ADD_SUB.getCode()).build());
         } else if (rand % 2 == 1 && rand <= 5) {
             long l = x - y - z;
             if (!containsNegative && l<0){
                 return y;
             }
-            questions.add(MathQuestion.builder().question(x + "-" + y + "-" + z + "=")
-                    .maxLimit(x)
+            questions.add(MathQuestion.builder().question(x + "-" + (y<0?"("+y+")":y)  + "-" +(z<0?"("+z+")":z) + "=")
+                    .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y))))
                     .answer(l + "").type(QuestionEnums.ADD_SUB.getCode()).build());
         }
         return y;
@@ -181,14 +167,14 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
         if (!containsNegative && l<0){
             return y;
         }
-        questions.add(MathQuestion.builder().question(x + "×" + y + "=")
-                .maxLimit(x > y ? x : y)
+        questions.add(MathQuestion.builder().question(x + "×" + (y<0?"("+y+")":y) + "=")
+                .maxLimit(Math.abs(x) > Math.abs(y) ? x : y)
                 .answer(l + "").type(QuestionEnums.MUL.getCode()).build());
         return y;
     }
 
     private Long div(Long x, Long y, List<MathQuestion> questions,boolean containsNegative) {
-        if (x > y || x == y) {
+//        if (x > y || x == y) {
             if (y == 0) {
                 return y;
             }
@@ -196,12 +182,11 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             if (!containsNegative && l<0){
                 return y;
             }
-            log.info("{}", l.toString());
-            if (!l.isInfinite()) {
+            if (!l.isInfinite() && !l.isNaN()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
-                    MathQuestion question = MathQuestion.builder().question(x + "÷" + y + "=")
-                            .maxLimit(x)
+                    MathQuestion question = MathQuestion.builder().question(x + "÷" + (y<0?"("+y+")":y)  + "=")
+                            .maxLimit(Math.max(Math.abs(x),Math.abs(y)))
                             .answer(l + "").type(QuestionEnums.DIV.getCode()).build();
                     if (trans == null) {
                         question.setAnswer(l.toString());
@@ -212,30 +197,30 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
                     }
                 }
             }
-        } else {
-            if (x == 0) {
-                return y;
-            }
-            Double l = y / x.doubleValue();
-            if (!containsNegative && l<0){
-                return y;
-            }
-            if (!l.isInfinite()) {
-                if (l.toString().split("[.]")[1].length() < 4) {
-                    Long trans = ifIntegerTransDouble(l);
-                    MathQuestion question = MathQuestion.builder().question(y + "÷" + x + "=")
-                            .maxLimit(y)
-                            .answer(l + "").type(QuestionEnums.DIV.getCode()).build();
-                    if (trans == null) {
-                        question.setAnswer(l.toString());
-                        questions.add(question);
-                    } else {
-                        question.setAnswer(trans.toString());
-                        questions.add(question);
-                    }
-                }
-            }
-        }
+//        } else {
+//            if (x == 0) {
+//                return y;
+//            }
+//            Double l = y / x.doubleValue();
+//            if (!containsNegative && l<0){
+//                return y;
+//            }
+//            if (!l.isInfinite() && !l.isNaN()) {
+//                if (l.toString().split("[.]")[1].length() < 4) {
+//                    Long trans = ifIntegerTransDouble(l);
+//                    MathQuestion question = MathQuestion.builder().question(y + "÷" + x + "=")
+//                            .maxLimit(y)
+//                            .answer(l + "").type(QuestionEnums.DIV.getCode()).build();
+//                    if (trans == null) {
+//                        question.setAnswer(l.toString());
+//                        questions.add(question);
+//                    } else {
+//                        question.setAnswer(trans.toString());
+//                        questions.add(question);
+//                    }
+//                }
+//            }
+//        }
         return y;
     }
 
@@ -248,11 +233,12 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             if (!containsNegative && l<0){
                 return y;
             }
-            if (!l.isInfinite()) {
+            if (!l.isInfinite() && !l.isNaN()) {
+                log.info(">>>>l:{}",l.toString());
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
-                    MathQuestion question = MathQuestion.builder().question(x + "×" + y + "÷" + z + "=")
-                            .maxLimit(x)
+                    MathQuestion question = MathQuestion.builder().question(x + "×" + (y<0?"("+y+")":y)+ "÷" + (z<0?"("+z+")":z) + "=")
+                            .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y))))
                             .answer(l + "").type(QuestionEnums.MUL_DIV.getCode()).build();
                     if (trans == null) {
                         question.setAnswer(l.toString());
@@ -268,11 +254,12 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             if (!containsNegative && l<0){
                 return y;
             }
-            if (!l.isInfinite()) {
+            if (!l.isInfinite() && !l.isNaN()) {
+                log.info(">>>>l:{}",l.toString());
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
-                    MathQuestion question = MathQuestion.builder().question(x + "÷" + y + "×" + z + "=")
-                            .maxLimit(x)
+                    MathQuestion question = MathQuestion.builder().question(x + "÷" + (y<0?"("+y+")":y) + "×" + (z<0?"("+z+")":z) + "=")
+                            .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y))))
                             .type(QuestionEnums.MUL_DIV.getCode()).build();
                     if (trans == null) {
                         question.setAnswer(l.toString());
@@ -288,19 +275,20 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             if (!containsNegative && l<0){
                 return y;
             }
-            questions.add(MathQuestion.builder().question(x + "×" + y + "×" + z + "=")
-                    .maxLimit(x)
+            questions.add(MathQuestion.builder().question(x + "×" + (y<0?"("+y+")":y)  + "×" + (z<0?"("+z+")":z) + "=")
+                    .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y))))
                     .answer(l + "").type(QuestionEnums.MUL_DIV.getCode()).build());
         } else if (rand % 2 == 1 && rand <= 5) {
             Double l = x / y.doubleValue() / z.doubleValue();
             if (!containsNegative && l<0){
                 return y;
             }
-            if (!l.isInfinite()) {
+            if (!l.isInfinite() && !l.isNaN()) {
+                log.info(">>>>l:{}",l.toString());
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
-                    MathQuestion question = MathQuestion.builder().question(x + "÷" + y + "÷" + z + "=")
-                            .maxLimit(x)
+                    MathQuestion question = MathQuestion.builder().question(x + "÷" + (y<0?"("+y+")":y)  + "÷" + (z<0?"("+z+")":z)  + "=")
+                            .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y))))
                             .type(QuestionEnums.MUL_DIV.getCode()).build();
                     if (trans == null) {
                         question.setAnswer(l.toString());
@@ -324,12 +312,12 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             if (!containsNegative && l<0){
                 return y;
             }
-            if (!l.isInfinite()) {
+            if (!l.isInfinite() && !l.isNaN()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
                     MathQuestion question = MathQuestion.builder()
-                            .question(x + "×" + y + "÷" + z + "+" + k + "=")
-                            .maxLimit(x)
+                            .question(x + "×" + (y<0?"("+y+")":y)+ "÷" + (z<0?"("+z+")":z) + "+" + (k<0?"("+k+")":k)+ "=")
+                            .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y),Math.abs(k))))
                             .answer(l + "").type(QuestionEnums.ASMD_THREE.getCode()).build();
                     if (trans == null) {
                         question.setAnswer(l.toString());
@@ -345,12 +333,12 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             if (!containsNegative && l<0){
                 return y;
             }
-            if (!l.isInfinite()) {
+            if (!l.isInfinite() && !l.isNaN()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
                     MathQuestion question = MathQuestion.builder()
-                            .question(x + "÷" + y + "-" + k + "×" + z + "=")
-                            .maxLimit(x)
+                            .question(x + "÷" + (y<0?"("+y+")":y) + "-" + (k<0?"("+k+")":k) + "×" + (z<0?"("+z+")":z)  + "=")
+                            .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y),Math.abs(k))))
                             .type(QuestionEnums.ASMD_THREE.getCode()).build();
                     if (trans == null) {
                         question.setAnswer(l.toString());
@@ -366,12 +354,12 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             if (!containsNegative && l<0){
                 return y;
             }
-            if (!l.isInfinite()) {
+            if (!l.isInfinite() && !l.isNaN()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
                     MathQuestion question = MathQuestion.builder()
-                            .question(x + "+" + y + "÷" + z + "-" + k + "=")
-                            .maxLimit(x)
+                            .question(x + "+" + (y<0?"("+y+")":y)  + "÷" + (z<0?"("+z+")":z) + "-" + (k<0?"("+k+")":k) + "=")
+                            .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y),Math.abs(k))))
                             .type(QuestionEnums.ASMD_THREE.getCode()).build();
                     if (trans == null) {
                         question.setAnswer(l.toString());
@@ -387,12 +375,12 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             if (!containsNegative && l<0){
                 return y;
             }
-            if (!l.isInfinite()) {
+            if (!l.isInfinite() && !l.isNaN()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
                     MathQuestion question = MathQuestion.builder()
-                            .question(x + "÷" + y + "×" + z + "+" + k + "=")
-                            .maxLimit(x)
+                            .question(x + "÷" + (y<0?"("+y+")":y)+ "×" +(z<0?"("+z+")":z) + "+" +(k<0?"("+k+")":k) + "=")
+                            .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y),Math.abs(k))))
                             .type(QuestionEnums.ASMD_THREE.getCode()).build();
                     if (trans == null) {
                         question.setAnswer(l.toString());
@@ -408,20 +396,20 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             if (!containsNegative && l<0){
                 return y;
             }
-            questions.add(MathQuestion.builder().question(x + "-" + y + "+" + z + "×" + k + "=")
-                    .maxLimit(x)
+            questions.add(MathQuestion.builder().question(x + "-" + (y<0?"("+y+")":y) + "+" + (z<0?"("+z+")":z) + "×" + (k<0?"("+k+")":k) + "=")
+                    .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y),Math.abs(k))))
                     .answer(l + "").type(QuestionEnums.ASMD_THREE.getCode()).build());
         }else if(rand%2==1 && rand>=10 && rand <15){
             Double l = x - y * z / k.doubleValue();
             if (!containsNegative && l<0){
                 return y;
             }
-            if (!l.isInfinite()) {
+            if (!l.isInfinite() && !l.isNaN()) {
                 if (l.toString().split("[.]")[1].length() < 4) {
                     Long trans = ifIntegerTransDouble(l);
                     MathQuestion question = MathQuestion.builder()
-                            .question(x + "-" + y + "×" + z + "÷" + k + "=")
-                            .maxLimit(x)
+                            .question(x + "-" + (y<0?"("+y+")":y)  + "×" + (z<0?"("+z+")":z)  + "÷" + (k<0?"("+k+")":k) + "=")
+                            .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y),Math.abs(k))))
                             .type(QuestionEnums.ASMD_THREE.getCode()).build();
                     if (trans == null) {
                         question.setAnswer(l.toString());
@@ -437,16 +425,16 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             if (!containsNegative && l<0){
                 return y;
             }
-            questions.add(MathQuestion.builder().question(x + "+" + y + "-" + k + "×" + z + "=")
-                    .maxLimit(x)
+            questions.add(MathQuestion.builder().question(x + "+" +(y<0?"("+y+")":y)  + "-" + (k<0?"("+k+")":k)  + "×" + (z<0?"("+z+")":z)  + "=")
+                    .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y),Math.abs(k))))
                     .answer(l + "").type(QuestionEnums.ASMD_THREE.getCode()).build());
         }else {
             long l = x * y - k + z;
             if (!containsNegative && l<0){
                 return y;
             }
-            questions.add(MathQuestion.builder().question(x + "×" + y + "-" + k + "+" + z + "=")
-                    .maxLimit(x)
+            questions.add(MathQuestion.builder().question(x + "×" + (y<0?"("+y+")":y) + "-" + (k<0?"("+k+")":k) + "+" + (z<0?"("+z+")":z) + "=")
+                    .maxLimit(Collections.max(Arrays.asList(Math.abs(z),Math.abs(x),Math.abs(y),Math.abs(k))))
                     .answer(l + "").type(QuestionEnums.ASMD_THREE.getCode()).build());
         }
         return y;
@@ -463,3 +451,8 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
 //        System.out.println("0.1".split("[.]").length);
 //    }
 }
+/**
+ * 负数在加法和减法运算中第一个数可以不加括号,也可以加括号,在之后得位置为了和它前面的加号或者减号区分,是要加括号的.
+ * 在乘法和除法运算中,第一的时候可以不加括号,但是不在第一的时候是一定要加括号的,不然就会变样了.
+ * 所以,为了更好的应用负号,为了避免出错,在你还不熟悉的情况下,在所有的运算中,不管它在什么位置,加括号都是最保险的.
+ */
