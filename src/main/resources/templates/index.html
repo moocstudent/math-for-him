@@ -110,6 +110,7 @@
     $("#GENERATE").click(beforeGenQs);
     function beforeGenQs(){
       closeProgress();
+      randomProcessStyle();
       showMask();
           var i=0;
           var timer=setInterval(function(){
@@ -185,6 +186,14 @@ function sleep(numberMillis) {
   return;
   }
 }
+function randomProcessStyle(){
+    var progressType =
+    ['progress aqua','progress copper','progress candy','progress neon',
+    'progress shine','progress zigzag','progress diamond','progress hearts',
+    'progress sparkle'];
+    console.log('random:'+parseInt(Math.random() * progressType.length, 10));
+    $("#processId").attr("class",progressType[parseInt(Math.random() * progressType.length, 10)]);
+}
 
 </script>
 <!--<div th:object="${session.currentMember}!=null">-->
@@ -197,7 +206,7 @@ function sleep(numberMillis) {
   <div id="divMask" style="filter:Alpha(opacity=30);display:none;background-color:#ffffff;bottom:0;z-index:1;">
     <!--此div用于展示进度条的图片-->
     <div id="divLoad" style="display:none;z-index:4;">
-      <div class="progress hearts" data-width="0%">
+      <div id="processId" class="progress hearts" data-width="0%">
         <div class="progress-text">0%</div>
         <div class="progress-bar">
           <div class="progress-text">0%</div>
