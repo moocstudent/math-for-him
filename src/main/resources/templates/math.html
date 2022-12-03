@@ -4,7 +4,12 @@
 <head>
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes"/>
+    <link rel="stylesheet" th:href="@{css/type.css}">
+    <link rel="stylesheet" th:href="@{css/typeFont.css?family=Rubik+Mono+One}" >
     <script th:src="@{/js/jquery.min.js}"></script>
+
+
+
     <script>
 <!--    big -->
 
@@ -36,7 +41,7 @@
     <option value="2">只做负数结果题目</option>
 </select>
 
-<table style="border:1px solid black;margin-left:auto;margin-right:auto;">
+<table id="qtable" style="border:1px solid black;margin-left:auto;margin-right:auto;">
     <tr>
         <!--        <th>题号</th>-->
         <th>题目</th>
@@ -54,8 +59,24 @@
                    th:onclick="'javascript:matchResult('+${q.id}+');'"/></td>
     </tr>
 </table>
+<div class="dynamicFont" style="text-align:center">
+<p id="offscreen-text" class="offscreen-text" hidden="hidden"></p>
+<p id="text" class="text" style="text-align:center"></p>
+<svg id="svg" style="text-align:center"> </svg>
+
+<input type="text" class="input" id="input" hidden="hidden" />
+</div>
+
+<script th:src="@{/js/typeCSSPlugin.min.js}"></script>
+<script th:src="@{/js/typeEasePack.min.js}"></script>
+<script th:src="@{/js/typeTweenLite.min.js}"></script>
+<script th:src="@{/js/typeIndex.js}"></script>
 
 <script>
+    var correctAudio = new Audio('/mp3/correct.mp3');
+    var wrongAudio = new Audio('/mp3/wrong.mp3');
+    var completedAudio = new Audio('/mp3/completed.wav');
+
     $('#answerNegative').change(negativeSelect);
     function negativeSelect(){
          console.log('select negative or not in answers.');
@@ -103,23 +124,56 @@
         console.log("answerjun:"+answerjun);
         var answer = $("#answer"+id).text(); // the last move ...
         console.log("answer:"+answer);
-        var correctAudio = new Audio('/mp3/correct.mp3');
-        var wrongAudio = new Audio('/mp3/wrong.mp3');
+
         if(parseFloat(answerjun)==parseFloat(answer)){
             console.log("He is correct!");
             //playing music and shown the answer !
             correctAudio.play();
             $("#answer"+id).show();
             $("#confirm"+id).hide();
+            var jug = iterateTableJugIsComplete();
+            console.log('jug:'+jug);
+            if(jug){
+             completedAudio.play();
+             popText();
+            }
         }else{
             console.log("Wrong answer! Sooo sadly!");
             wrongAudio.play();
         }
     }
 
+    function iterateTableJugIsComplete(){
+     var passcount=0;
+     var notpasscount = 0;
+		$('#qtable').find('tbody').each(function () {
+            $(this).find('tr').each(function () {
+              idx3 = $($(this).find('td')[3]);
+              if(JSON.stringify(idx3) !== '{}'){
+                //if idx3 ele not null obj then check the hidden
+                //if all hidden is false, then prove that all completed
+                var dbAnswerHidden = idx3.is(':hidden');
+                if(dbAnswerHidden){
+                    notpasscount++;
+                    return false;
+                }else{
+                    passcount++;
+                }
+              }
+            });
+        });
+            if(notpasscount>0){
+              console.log('not completed');
+              return false;
+            }
+            if(notpasscount==0 && passcount>0){
+                console.log('all completed');
+                return true;
+            }
+    }
+
 
 
 </script>
-
 </body>
 </html>

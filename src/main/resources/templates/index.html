@@ -7,9 +7,12 @@
 
   <title>给君洋的刷题网</title>
   <script th:src="@{/js/jquery.min.js}"></script>
+  <script th:src="@{/js/progressbar.js}"></script>
   <script th:src="@{/js/jquery.serializejson.min.js}"></script>
+  <link rel="stylesheet" th:href="@{css/progressbar.css}">
 </head>
 <body>
+<div id="bk" style="text-align:center;">
 
 <!--<p>用户登录</p>-->
 <!--<form action="/user/login">-->
@@ -27,6 +30,7 @@
 <!--<a href="/demo/echarts3">图表展示demo3</a> <br>-->
 
 <!--<a href="/demo/test1">测试index</a> <br>-->
+
 
 
 
@@ -103,22 +107,84 @@
 
 <script th:inline="none">
     /*拿题 我说呢原来大括号和小括号忘记换了 乐天派加油*/
-    $("#GENERATE").click(generateMathQuestions);
-    function generateMathQuestions(){
+    $("#GENERATE").click(beforeGenQs);
+    function beforeGenQs(){
+      closeProgress();
+      showMask();
+          var i=0;
+          var timer=setInterval(function(){
+                  if(i<100){
+                      i+=1;
+                      console.log(i);
+                      $('.progress-bar').css('width',i+'%');
+                  }
+                  if(i>=99){
+                      clearInterval(timer);
+                  }
+          },99);
+          generateMathQuestions(timer);
+    }
+    function generateMathQuestions(timer){
         $.ajax({
             url:"/generateQ",
             data: $('#generateForm').serializeJSON(),
             type:"post",
             dataType:"JSON",
             success:function(data){
+             if(data.code==1){
+              $('.progress-bar').css('width',100+'%');
+             }else{
+               $('.progress-bar').css('width',0+'%');
+             }
                console.log(data);
-              alert(data.msg);
+               clearInterval(timer);
+
 <!--                window.location.reload();-->
+            },
+            error: function (errormessage) {
+                //do something else
+                clearInterval(timer);
+                $('.progress-bar').css('width',0+'%');
+                closeProgress();
             }
         })
     }
+    function closeProgress(){
+       hideMask();
+       $('.progress-bar').css('width',0+'%');
+    }
+<!--    $('#bk').click(closeProgress);-->
 
-
+//加载loading
+function showMask(){
+ console.log('loading...');
+ var divMask = document.getElementById("divMask");
+ var divLoad = document.getElementById("divLoad");
+ divMask.style.display="block";
+ var vwidth = document.body.offsetWidth+20;
+ var vheitht = document.body.offsetHeight;
+ divMask.style.width=vwidth;
+ divMask.style.height=vheitht;
+ divLoad.style.display="block";
+ divLoad.style.top=(vheitht-200)/2;
+ divLoad.style.left=(vwidth-200)/2;
+}
+//隐藏loading
+function hideMask(){
+ var divMask = document.getElementById("divMask");
+ var divLoad = document.getElementById("divLoad");
+ divMask.style.display="none";
+ divLoad.style.display="none";
+}
+function sleep(numberMillis) {
+  var now = new Date();
+  var exitTime = now.getTime() + numberMillis;
+  while (true) {
+  now = new Date();
+  if (now.getTime() > exitTime)
+  return;
+  }
+}
 
 </script>
 <!--<div th:object="${session.currentMember}!=null">-->
@@ -126,7 +192,20 @@
 <!--<p>用户等级:<span th:text="*{member_level}"></span></p>-->
 <!--<p>创建时间:<span th:text="${#calendars.format(*{create_time},'dd MMMM yyyy')}"></span></p>-->
 <!--</div>-->
+  <!--此div用于展示遮罩区-->
 
-
+  <div id="divMask" style="filter:Alpha(opacity=30);display:none;background-color:#ffffff;bottom:0;z-index:1;">
+    <!--此div用于展示进度条的图片-->
+    <div id="divLoad" style="display:none;z-index:4;">
+      <div class="progress hearts" data-width="0%">
+        <div class="progress-text">0%</div>
+        <div class="progress-bar">
+          <div class="progress-text">0%</div>
+        </div>
+      </div>
+      <!--  <input id="slider" type="range" name="slider" min="0" max="100" value="0" >-->
+    </div>
+  </div>
+</div>
 </body>
 </html>
