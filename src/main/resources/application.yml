@@ -3,7 +3,6 @@ spring:
 #    user:
 #      name: zhangjunyang
 #      password: 666666
-
   jpa:
     properties:
       hibernate:
