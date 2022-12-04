@@ -2,12 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
     <link rel="stylesheet" th:href="@{css/type.css}">
-    <link rel="stylesheet" th:href="@{css/typeFont.css?family=Rubik+Mono+One}" >
+    <link rel="stylesheet" th:href="@{css/typeFont.css?family=Rubik+Mono+One}">
     <script th:src="@{/js/jquery.min.js}"></script>
-
 
 
     <script>
@@ -15,13 +13,23 @@
 
 
 
+
     </script>
     <style>
         body{text-align:center;}
-        table{magin:auto;}
 
+        table{
+            magin:auto;
+            table-layout:fixed;      /* 只有定义了表格的布局算法为fixed，下面td的定义才能起作用。 */
 
+        }
 
+        td{
+            word-break:keep-all;     /* 不换行 */
+            white-space:nowrap;      /* 不换行 */
+            overflow:hidden;         /* 内容超出宽度时隐藏超出部分的内容 */
+            text-overflow:ellipsis;  /* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用。*/
+        }
     </style>
     <meta charset="UTF-8">
     <title>数学题</title>
@@ -34,7 +42,7 @@
 <input id="maxLimitAdjustBtn" type="button" value="最大数值区间调整"/>
 
 
-<select name="answerNegative"  id="answerNegative"  style="width:80;height:50;border-radius:10px">
+<select name="answerNegative" id="answerNegative" style="width:80;height:50;border-radius:10px">
     <option value='0'>选择结果正或负数</option>
     <option value="0">结果包括正和负数</option>
     <option value="1">只做正数结果题目</option>
@@ -49,22 +57,22 @@
         <th></th>
     </tr>
     <!--关于理性主义，我先说到这里，因为还有一个重要的问题等着我去解决，那就是实用主义与协调经验主义思想的关系-->
-    <tr th:each="q : ${questions}">
+    <tr th:each="q : ${questions}" >
         <!--        <td th:text="${q.id}"></td>-->
-        <td th:id="question+${q.id}" th:text="${q.question}"></td>
+        <td th:id="question+${q.id}" th:text="${q.question}" ></td>
         <td th:text="${q.id}" hidden="hidden"></td>
-        <td><input th:id="answerjun+${q.id}" style="width:80;height:50;border-radius:10px" type="number"/></td>
-        <td th:id="answer+${q.id}" th:text="${q.answer}" hidden="hidden"></td>
-        <td><input th:id="confirm+${q.id}" style="width:100px;height:30px;border-radius:10px" type="button" value="确认结果"
+        <td><input th:id="answerjun+${q.id}" style="height:50;border-radius:10px" type="number"/></td>
+        <td th:id="answer+${q.id}" th:text="${q.answer}" hidden="hidden" ></td>
+        <td><input th:id="confirm+${q.id}" style="height:30px;border-radius:10px" type="button" value="确认结果"
                    th:onclick="'javascript:matchResult('+${q.id}+');'"/></td>
     </tr>
 </table>
 <div class="dynamicFont" style="text-align:center">
-<p id="offscreen-text" class="offscreen-text" hidden="hidden"></p>
-<p id="text" class="text" style="text-align:center"></p>
-<svg id="svg" style="text-align:center"> </svg>
+    <p id="offscreen-text" class="offscreen-text" hidden="hidden"></p>
+    <p id="text" class="text" style="text-align:center"></p>
+    <svg id="svg" style="text-align:center"></svg>
 
-<input type="text" class="input" id="input" hidden="hidden" />
+    <input type="text" class="input" id="input" hidden="hidden"/>
 </div>
 
 <script th:src="@{/js/typeCSSPlugin.min.js}"></script>
@@ -171,6 +179,7 @@
                 return true;
             }
     }
+
 
 
 
