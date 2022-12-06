@@ -1,23 +1,15 @@
-package fun.implementsstudio.mathforhim.entity;
+package fun.implementsstudio.mathforhim.bo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.io.Serializable;
-
-@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-@Entity
-@Table(name = "math_members")
-public class MemberEntity extends BaseEntity implements Serializable {
+public class MemberAddBo {
 
     private String loginName;//登陆名
     private String loginPassword;//登陆密码
@@ -28,7 +20,5 @@ public class MemberEntity extends BaseEntity implements Serializable {
 
     private String parentName;//父母名称
     private String parentEmail;//用于发送做题报告
-
-    private Long vipLevel;//vip等级 初始NULL 即不是会员
 
 }
