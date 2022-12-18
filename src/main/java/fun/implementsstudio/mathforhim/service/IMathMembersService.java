@@ -10,7 +10,7 @@ public interface IMathMembersService {
      * @param memberAddBo
      * @return
      */
-    Long register(MemberAddBo memberAddBo);
+    MemberEntity register(MemberAddBo memberAddBo);
 
     /**
      * 就是登陆
@@ -24,10 +24,16 @@ public interface IMathMembersService {
      * 就像上次看到的，自己注销的用户，如果注册了会员会返还
      * @param loginName
      * @param loginPassword
+     * @return 激活码
+     */
+    String cancel(String loginName,String loginPassword);
+
+    /**
+     * 激活账户
+     * @param activationCode
      * @return
      */
-    Boolean cancel(String loginName,String loginPassword);
-
+    String active(String activationCode);
 
 
 }

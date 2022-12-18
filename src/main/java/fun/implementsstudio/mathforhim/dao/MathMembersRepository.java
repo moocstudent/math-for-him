@@ -11,4 +11,11 @@ public interface MathMembersRepository extends BaseRepository<MemberEntity,Long>
      */
     MemberEntity findByLoginNameAndLoginPassword(String loginName,String loginPassword);
 
+    /**
+     * find by loginName
+     * @param loginName
+     * @return
+     */
+    MemberEntity findByLoginName(String loginName);
+
 }

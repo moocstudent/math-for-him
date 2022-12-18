@@ -9,27 +9,28 @@
   <script th:src="@{/js/jquery.min.js}"></script>
   <script th:src="@{/js/progressbar.js}"></script>
   <script th:src="@{/js/jquery.serializejson.min.js}"></script>
-  <link rel="stylesheet" th:href="@{css/progressbar.css}">
+  <link rel="stylesheet" th:href="@{/css/progressbar.css}">
 </head>
 <body>
 <div id="bk" style="text-align:center;">
 
-<!--<p>用户登录</p>-->
-<!--<form action="/user/login">-->
-<!--<input type="text" name="username"/>-->
-<!--<input type="text" name="password"/>-->
-<!--<input type="submit" value="登录"/>-->
-<!--</form>-->
+  <div th:if="${session.memberId != null}">
+    欢迎你,<span th:text="${session.memberName}"></span>,
+    <a href="/auth/doLogout">登出</a>
+  </div>
+  <div th:if="${session.memberId == null}">
+    <form id="loginForm" th:action="@{/auth/doLogin}" method="post">
+      <fieldset>
+        登陆名 <br/>
+        <input type="text" id="loginName" name="loginName" required="required" style="width:80;height:50;border-radius:10px"/> <br>
+        登陆密码 <br/>
+        <input type="text" id="loginPassword" name="loginPassword" required="required" style="width:100;height:50;border-radius:10px"/> <br>
+        <input type="submit" id="LOGIN" style="width:100px;height:60px;border-radius:10px" value="登陆"/>
+      </fieldset>
+    </form>
+    <a th:href="@{/register}">注册</a>
+  </div>
 
-<!--<p>form</p>-->
-<!--<a href="/demo/formstyle">form表单注册/登录样式(验证样式)</a> <br>-->
-<!--<p>echarts</p>-->
-<!--<a href="/demo/echarts">图表展示demo</a> <br>-->
-<!--<a href="/demo/echarts1">图表展示demo1</a> <br>-->
-<!--<a href="/demo/echarts2">图表展示demo2</a> <br>-->
-<!--<a href="/demo/echarts3">图表展示demo3</a> <br>-->
-
-<!--<a href="/demo/test1">测试index</a> <br>-->
 
 
 
@@ -52,14 +53,14 @@
 </div>
 -->
 
-<a href="math.html" th:href="@{/getQList}">开始做数学题</a> <br>
-<a href="math.html" th:href="@{/getQList?type=addition}">专做加法</a> <br>
-<a href="math.html" th:href="@{/getQList?type=subtraction}">专做减法</a> <br>
-<a href="math.html" th:href="@{/getQList?type=multiplication}">专做乘法</a> <br>
-<a href="math.html" th:href="@{/getQList?type=division}">专做除法</a> <br>
-<a href="math.html" th:href="@{/getQList?type=addWithSub}">专做加减法混合</a> <br>
-<a href="math.html" th:href="@{/getQList?type=mulAndDiv}">专做乘除法混合</a> <br>
-<a href="math.html" th:href="@{/getQList?type=asmdThanThree}">专做包含加减乘除中至少三种混合的</a> <br>
+<a href="math.html" th:href="@{/fun/getQList}" rel="opener">开始做数学题</a> <br>
+<a href="math.html" th:href="@{/fun/getQList?type=addition}" rel="opener">专做加法</a> <br>
+<a href="math.html" th:href="@{/fun/getQList?type=subtraction}" rel="opener">专做减法</a> <br>
+<a href="math.html" th:href="@{/fun/getQList?type=multiplication}" rel="opener">专做乘法</a> <br>
+<a href="math.html" th:href="@{/fun/getQList?type=division}" rel="opener">专做除法</a> <br>
+<a href="math.html" th:href="@{/fun/getQList?type=addWithSub}" rel="opener">专做加减法混合</a> <br>
+<a href="math.html" th:href="@{/fun/getQList?type=mulAndDiv}" rel="opener">专做乘除法混合</a> <br>
+<a href="math.html" th:href="@{/fun/getQList?type=asmdThanThree}" rel="opener">专做包含加减乘除中至少三种混合的</a> <br>
 
 <hr>
 <hr>
@@ -81,24 +82,11 @@
     <input type="number" id="size" name="size" required="required" style="width:80;height:50;border-radius:10px"/> <br>
     是否允许结果为负数?允许则勾选:
     <input type="radio" id="containsNegative" name="containsNegative" style="width:80;height:50;border-radius:10px"/> <br>
-    <input type="button" id="GENERATE" style="width:100px;height:60px;border-radius:10px" value="生成"/>
+    注册/登陆后才可使用生成:
+    <input type="button" th:disabled="${session.memberId == null}"
+           id="GENERATE" style="width:100px;height:60px;border-radius:10px" value="生成"/>
   </fieldset>
 </form>
-
-<!--<a href="#" th:href="@{/generateQ?type=addition}">专做加法</a> <br>-->
-<!--<div th:if="${session.currentMember!=null}" th:object="${session.currentMember}">-->
-<!--  <p>欢迎,<span th:text="*{truename}">游客名称</span></p>-->
-<!--  <p>用户等级:<span th:text="*{member_level}"></span></p>-->
-<!--  <p>用户等级:<span th:value="*{member_level}"></span></p>-->
-<!--  <a id="logoutBtn"><u>登出</u></a> <br>-->
-
-<!--  <hr>-->
-<!--  &lt;!&ndash;<p>创建时间:<span th:text="${#calendars.format(*{create_time},'dd MMMM yyyy')}"></span></p>&ndash;&gt;-->
-<!--  <a th:href="@{/data/echarts0}">图表0查看</a> <br>-->
-<!--  <a th:href="@{/data/echarts1}">图表1查看</a> <br>-->
-<!--  <a th:href="@{/data/echarts2}">图表2查看</a> <br>-->
-<!--  <a th:href="@{/data/echarts3}">图表3查看</a> <br>-->
-<!--</div>-->
 
 
 <hr>
@@ -127,7 +115,7 @@
     }
     function generateMathQuestions(timer){
         $.ajax({
-            url:"/generateQ",
+            url:"/fun/generateQ",
             data: $('#generateForm').serializeJSON(),
             type:"post",
             dataType:"JSON",
@@ -143,6 +131,7 @@
 <!--                window.location.reload();-->
             },
             error: function (errormessage) {
+              console.log('onerror:'+JSON.stringify(errormessage));
                 //do something else
                 clearInterval(timer);
                 $('.progress-bar').css('width',0+'%');
@@ -194,6 +183,52 @@ function randomProcessStyle(){
     console.log('random:'+parseInt(Math.random() * progressType.length, 10));
     $("#processId").attr("class",progressType[parseInt(Math.random() * progressType.length, 10)]);
 }
+
+   /*乐天派又在写代码咯*/
+    $("#LOGIN").click(beforeLogin);
+    function beforeLogin(){
+      closeProgress();
+      randomProcessStyle();
+      showMask();
+          var i=0;
+          var timer=setInterval(function(){
+                  if(i<100){
+                      i+=1;
+                      console.log(i);
+                      $('.progress-bar').css('width',i+'%');
+                  }
+                  if(i>=99){
+                      clearInterval(timer);
+                  }
+          },99);
+          doTheLogin(timer);
+    }
+    function doTheLogin(timer){
+        $.ajax({
+            url:"/auth/doLogin",
+            data: $('#loginForm').serializeJSON(),
+            type:"post",
+            dataType:"JSON",
+            success:function(data){
+             if(data.code==1){
+              $('.progress-bar').css('width',100+'%');
+              window.location.href='/';
+             }else{
+               $('.progress-bar').css('width',0+'%');
+             }
+               console.log(data);
+               clearInterval(timer);
+
+<!--                window.location.reload();-->
+            },
+            error: function (errormessage) {
+                //do something else
+                clearInterval(timer);
+                $('.progress-bar').css('width',0+'%');
+                closeProgress();
+            }
+        })
+    }
 
 </script>
 <!--<div th:object="${session.currentMember}!=null">-->

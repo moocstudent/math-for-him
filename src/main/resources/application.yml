@@ -3,6 +3,9 @@ spring:
 #    user:
 #      name: zhangjunyang
 #      password: 666666
+  redis:
+    host: localhost
+    port: 6379
   jpa:
     properties:
       hibernate:
@@ -33,3 +36,8 @@ aliyun:
     regionId: cn-shanghai
     accessKeyId: LTAI5tLtZSiXoBHpg1osBEX6
     accessKeySecret: JPOaJJypeV2k3yYTSMJdqCw9ME4bu1
+
+math:
+  invitation_mode: true
+
+

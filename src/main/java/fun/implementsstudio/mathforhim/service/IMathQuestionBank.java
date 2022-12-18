@@ -22,7 +22,7 @@ public interface IMathQuestionBank {
      * @param generateQuestionBo
      * @return
      */
-    Boolean generateNewQuestions(GenerateQuestionBo generateQuestionBo);
+    Boolean generateNewQuestions(GenerateQuestionBo generateQuestionBo,String memberId);
 
     /**
      * 获取试题，默认加法，限制大小数值到100，获取10道题
@@ -30,4 +30,5 @@ public interface IMathQuestionBank {
      * @return
      */
     List<MathQuestion> getQuestions(GetQuestionsBo getQuestionsBo);
+    List<MathQuestion> getQuestions(GetQuestionsBo getQuestionsBo,String memberId);
 }

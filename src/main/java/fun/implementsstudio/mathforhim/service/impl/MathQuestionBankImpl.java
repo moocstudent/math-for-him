@@ -38,7 +38,7 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
     }
 
     @Override
-    public Boolean generateNewQuestions(GenerateQuestionBo generateQuestionBo) {
+    public Boolean generateNewQuestions(GenerateQuestionBo generateQuestionBo,String memberId) {
         Long maxNumber = generateQuestionBo.getMaxNumber() + 1;
         Long minNumber = generateQuestionBo.getMinNumber();
         String type = generateQuestionBo.getType();
@@ -90,7 +90,8 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
             longs.boxed().reduce(longBinaryOperator).orElse(null);
         }
         List<MathQuestion> matchSizeQs = questions.stream().limit(size).collect(Collectors.toList());
-        Iterable<MathQuestion> mathQuestions = mathQuestionRepository.saveAll(matchSizeQs);
+        List<MathQuestion> theOwnerMathQuestions = matchSizeQs.stream().peek(q -> q.setMemberId(memberId)).collect(Collectors.toList());
+        Iterable<MathQuestion> mathQuestions = mathQuestionRepository.saveAll(theOwnerMathQuestions);
         return true;
     }
 
@@ -98,6 +99,13 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
     public List<MathQuestion> getQuestions(GetQuestionsBo getQuestionsBo) {
         return mathQuestionRepository.findByConditions2(getQuestionsBo.getType(),
                 getQuestionsBo.getMaxLimit(), getQuestionsBo.getSize(),getQuestionsBo.getAnswerNegative());
+    }
+
+    @Override
+    public List<MathQuestion> getQuestions(GetQuestionsBo getQuestionsBo, String memberId) {
+        return mathQuestionRepository.findByConditions3(getQuestionsBo.getType(),
+                getQuestionsBo.getMaxLimit(),getQuestionsBo.getSize(),getQuestionsBo.getAnswerNegative(),
+                memberId);
     }
 
     private Long add(Long x, Long y, List<MathQuestion> questions,boolean containsNegative) {

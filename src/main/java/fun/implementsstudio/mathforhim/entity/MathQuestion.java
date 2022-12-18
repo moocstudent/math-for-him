@@ -39,5 +39,10 @@ public class MathQuestion extends BaseEntity implements Serializable {
      */
     private String type;
 
+    /**
+     * 会员id，即绑定哪些题是哪些用户出的
+     */
+    private String memberId;
+
 
 }
