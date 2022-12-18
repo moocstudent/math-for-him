@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>fun.implementsstudio</groupId>
 	<artifactId>math-for-him</artifactId>
-	<version>0.0.7-SNAPSHOT</version>
+	<version>v1.1</version>
 	<name>math-for-him</name>
-	<description>Demo project for Spring Boot</description>
+	<description>mathforhim-junyang</description>
 	<properties>
 		<java.version>8</java.version>
 	</properties>

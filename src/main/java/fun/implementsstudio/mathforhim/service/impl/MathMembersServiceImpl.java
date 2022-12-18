@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Objects;
+
 @Service
 public class MathMembersServiceImpl implements IMathMembersService {
     @Autowired
@@ -32,6 +34,10 @@ public class MathMembersServiceImpl implements IMathMembersService {
             }else{
                 throw new RuntimeException("请输入激活码");
             }
+        }
+        MemberEntity byLoginName = mathMembersRepository.findByLoginName(memberAddBo.getLoginName());
+        if (!Objects.isNull(byLoginName)){
+            throw new RuntimeException("该注册账号已经存在，请尝试其它登陆名称！");
         }
         MemberEntity memberEntity = BeanUtil.getClass(MemberEntity.class, memberAddBo).get();
         return mathMembersRepository.save(memberEntity);
