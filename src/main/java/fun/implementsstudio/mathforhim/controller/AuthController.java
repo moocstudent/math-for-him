@@ -74,10 +74,19 @@ public class AuthController {
     @PostMapping(value = "/doReg")
     public BaseResult reg(@Validated MemberAddBo addBo, Model model){
         log.info("doReg...");
-        MemberEntity register = mathMembersService.register(addBo);
+        MemberEntity register = null;
+        try {
+            register = mathMembersService.register(addBo);
+        } catch (Exception e) {
+            return BaseResult.builder()
+                    .code(register==null?0:1)
+                    .msg(e.getMessage())
+                    .data(register).build();
+        }
         model.addAttribute("member",register);
         return BaseResult.builder()
                 .code(register==null?0:1)
+                .msg("注册成功，请牢记您的账户信息。（现在并没有账户找回功能）")
                 .data(register).build();
     }
 

@@ -78,9 +78,11 @@
             console.log('onsuccess')
              if(data.code==1){
               $('.progress-bar').css('width',100+'%');
+              alert(data.msg);
               window.location.href='/';
              }else{
                $('.progress-bar').css('width',0+'%');
+               alert(data.msg);
              }
                console.log(data);
                clearInterval(timer);
