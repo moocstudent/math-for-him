@@ -4,9 +4,9 @@ import fun.implementsstudio.mathforhim.bo.GenerateQuestionBo;
 import fun.implementsstudio.mathforhim.bo.GetQuestionsBo;
 import fun.implementsstudio.mathforhim.entity.MathQuestion;
 import fun.implementsstudio.mathforhim.enums.QuestionEnums;
+import fun.implementsstudio.mathforhim.manager.MathQuestionManager;
 import fun.implementsstudio.mathforhim.result.BaseResult;
 import fun.implementsstudio.mathforhim.service.IMathQuestionBank;
-import fun.implementsstudio.mathforhim.util.SecurityUtilz;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -21,13 +21,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
  * Why I need this @SpringBootApplication
+ * 多活动头就不会痛
  */
 @Slf4j
 @SpringBootApplication
@@ -43,6 +47,8 @@ public class MathForHimApplication {
 
     @Autowired
     private IMathQuestionBank mathQuestionBank;
+    @Autowired
+    private MathQuestionManager mathQuestionManager;
 
     @GetMapping("/name")
     @ResponseBody
@@ -64,6 +70,17 @@ public class MathForHimApplication {
             //用户未登陆则不能生成题目
             return BaseResult.builder().code(0).build();
         }
+        Long geneSizeJustice = mathQuestionManager.justifyGeneSize(String.valueOf(memberId), generateQuestionBo.getSize());
+        if (geneSizeJustice==0){
+            //todo vip with size table relation and notification
+            Long sizeForNow = mathQuestionManager.bankSizeForNow(String.valueOf(memberId));
+            return BaseResult.builder().code(0).data(false)
+                    .msg("生成题目失败了,因为你现在的题库数量:"+
+                            sizeForNow+"已不能再创建这么多题了!请升级vip或者删除部分题目～")
+                    .build();
+            //todo 页面 location = 对应题目数量展示页面以及升级vip
+        }
+        generateQuestionBo.setSize(geneSizeJustice);
         Boolean success = mathQuestionBank.generateNewQuestions(generateQuestionBo,String.valueOf(memberId));
         return BaseResult.builder().code(1).data(success)
                 .msg(success ? "生成了" +
@@ -75,8 +92,16 @@ public class MathForHimApplication {
 
     @GetMapping("/fun/getQ")
     @ResponseBody
-    public BaseResult getQuestions(GetQuestionsBo getQuestionsBo) {
-        return BaseResult.builder().data(mathQuestionBank.getQuestions(getQuestionsBo)).code(1).build();
+    public BaseResult getQuestions(GetQuestionsBo getQuestionsBo,HttpSession session) {
+        //整来整去 还是session好使
+        Object memberId = session.getAttribute("memberId");
+        if (Objects.isNull(memberId)){
+            //用户未登陆则不能生成题目
+            return BaseResult.builder().code(0).build();
+        }
+        return BaseResult.builder()
+                .data(mathQuestionBank.getQuestions(getQuestionsBo,String.valueOf(memberId)))
+                .code(1).build();
     }
 
     /**

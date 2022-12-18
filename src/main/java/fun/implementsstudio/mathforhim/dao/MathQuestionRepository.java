@@ -44,7 +44,7 @@ public interface MathQuestionRepository extends BaseRepository<MathQuestion, Lon
             "math_question_bank where " +
             "if(IFNULL(:type,'') !='',type=:type,1=1) and max_limit <=:maxLimit " +
             "and (case when :answerNegative=1 then answer>0 when :answerNegative=2 then answer<0 else 1=1 end)" +
-            "and member_id = :memberId"+
+            " and member_id = :memberId "+
             "order by rand() limit :size"
             , nativeQuery = true)
     List<MathQuestion> findByConditions3(@Param("type") String type,
@@ -52,6 +52,15 @@ public interface MathQuestionRepository extends BaseRepository<MathQuestion, Lon
                                          @Param("size") long size,
                                          @Param("answerNegative") Integer answerNegative,
                                          @Param("memberId") String memberId);
+
+    /**
+     * 统计member有多少道题
+     * @param memberId
+     * @return
+     */
+    @Query(value = "select count(1) from math_question_bank " +
+            "where member_id = :memberId",nativeQuery = true)
+    Long countByMemberId(@Param("memberId")String memberId);
 
 
 }

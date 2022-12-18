@@ -93,7 +93,10 @@
 
 
 
-<script th:inline="none">
+<!--<div th:object="${session.currentMember}!=null">-->
+  <!--<p>欢迎,<span th:text="*{truename}">游客名称</span></p>-->
+  <!--<p>用户等级:<span th:text="*{member_level}"></span></p>-->
+  <script th:inline="none">
     /*拿题 我说呢原来大括号和小括号忘记换了 乐天派加油*/
     $("#GENERATE").click(beforeGenQs);
     function beforeGenQs(){
@@ -122,8 +125,10 @@
             success:function(data){
              if(data.code==1){
               $('.progress-bar').css('width',100+'%');
+               alert(data.msg);
              }else{
                $('.progress-bar').css('width',0+'%');
+               alert(data.msg);
              }
                console.log(data);
                clearInterval(timer);
@@ -231,10 +236,7 @@ function randomProcessStyle(){
     }
 
 </script>
-<!--<div th:object="${session.currentMember}!=null">-->
-<!--<p>欢迎,<span th:text="*{truename}">游客名称</span></p>-->
-<!--<p>用户等级:<span th:text="*{member_level}"></span></p>-->
-<!--<p>创建时间:<span th:text="${#calendars.format(*{create_time},'dd MMMM yyyy')}"></span></p>-->
+  <!--<p>创建时间:<span th:text="${#calendars.format(*{create_time},'dd MMMM yyyy')}"></span></p>-->
 <!--</div>-->
   <!--此div用于展示遮罩区-->
 

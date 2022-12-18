@@ -10,7 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -91,6 +96,7 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
         }
         List<MathQuestion> matchSizeQs = questions.stream().limit(size).collect(Collectors.toList());
         List<MathQuestion> theOwnerMathQuestions = matchSizeQs.stream().peek(q -> q.setMemberId(memberId)).collect(Collectors.toList());
+        log.info("theOwnerMathQuestions to save right now size is :{}",theOwnerMathQuestions.size());
         Iterable<MathQuestion> mathQuestions = mathQuestionRepository.saveAll(theOwnerMathQuestions);
         return true;
     }
