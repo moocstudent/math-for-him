@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * SpringSecurity 配置类
  * @author lucas
  * @date 2019-12-23 17:17:29
+ * 会好的，悲观者往往正确，乐观者往往成功！
  */
 @Configuration
 @EnableWebSecurity
@@ -46,7 +47,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 // swagger start
                 .antMatchers("/swagger-ui.html").permitAll().antMatchers("/swagger-resources/**").permitAll().antMatchers("/webjars/**").permitAll().antMatchers("/v2/api-docs").permitAll()
                 // swagger end
-                .antMatchers("/auth/**").permitAll().antMatchers("/fun/**").permitAll().antMatchers("/login").permitAll().antMatchers("/register").permitAll().antMatchers("/").permitAll().and().logout().logoutUrl("/auth/doLogout").logoutSuccessUrl("/").permitAll()
+                .antMatchers("/auth/**").permitAll().antMatchers("/fun/**").permitAll().antMatchers("/login").permitAll()
+                .antMatchers("/register").permitAll().antMatchers("/").permitAll().and().logout().logoutUrl("/auth/doLogout").logoutSuccessUrl("/").permitAll()
                 .and()
                 .sessionManagement()
                 // 失效后跳转到登陆页面

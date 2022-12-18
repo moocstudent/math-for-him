@@ -28,7 +28,8 @@
         <input type="submit" id="LOGIN" style="width:100px;height:60px;border-radius:10px" value="登陆"/>
       </fieldset>
     </form>
-    <a th:href="@{/register}">注册</a>
+    <p style="color:red" th:display="${session.loginError!=null}" th:text="${session.loginError}"></p>
+    <a style="color:green" th:href="@{/register}">注册</a>
   </div>
 
 
@@ -220,6 +221,7 @@ function randomProcessStyle(){
               window.location.href='/';
              }else{
                $('.progress-bar').css('width',0+'%');
+               alert("用户名或密码错误");
              }
                console.log(data);
                clearInterval(timer);

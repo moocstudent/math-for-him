@@ -79,6 +79,7 @@
              if(data.code==1){
               $('.progress-bar').css('width',100+'%');
               alert(data.msg);
+              alert("请保存这些信息,该信息只弹出一次."+JSON.stringify(data.data));
               window.location.href='/';
              }else{
                $('.progress-bar').css('width',0+'%');

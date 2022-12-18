@@ -1,5 +1,7 @@
 package fun.implementsstudio.mathforhim.controller;
 
+import com.alibaba.fastjson2.JSONObject;
+import com.google.gson.JsonObject;
 import fun.implementsstudio.mathforhim.bo.DoLoginBo;
 import fun.implementsstudio.mathforhim.bo.MemberAddBo;
 import fun.implementsstudio.mathforhim.entity.MemberEntity;
@@ -52,11 +54,12 @@ public class AuthController {
 //            Authentication authenticate = authenticationManager.authenticate(authenticationToken);
 //            Object principal = authenticate.getPrincipal();
 //            log.info("principal:{}",principal);
-
         } catch (AuthenticationException e) {
             log.error("authenticationException:{}",e.getMessage());
-            mv.setViewName("theIndex");
-            mv.addObject("member",null);
+            mv.setViewName("redirect:/");
+            session.setAttribute("memberId",null);
+            session.setAttribute("memberName",null);
+            session.setAttribute("loginError","用户名或密码错误");
             return mv;
         }
         MemberEntity entity = mathMembersService.login(loginBo.getLoginName(), loginBo.getLoginPassword());
@@ -64,15 +67,19 @@ public class AuthController {
         if(!Objects.isNull(entity)){
             session.setAttribute("memberId",entity.getId());
             session.setAttribute("memberName",entity.getChildName());
+            session.setAttribute("loginError",null);
+        }else{
+            session.setAttribute("memberId",null);
+            session.setAttribute("memberName",null);
+            session.setAttribute("loginError","用户名或密码错误");
         }
-        mv.addObject("member",entity);
         mv.setViewName("redirect:/");
         return mv;
     }
 
     @ResponseBody
     @PostMapping(value = "/doReg")
-    public BaseResult reg(@Validated MemberAddBo addBo, Model model){
+    public BaseResult reg(@Validated MemberAddBo addBo, Model model,HttpSession session){
         log.info("doReg...");
         MemberEntity register = null;
         try {
@@ -84,10 +91,14 @@ public class AuthController {
                     .data(register).build();
         }
         model.addAttribute("member",register);
+        session.setAttribute("loginError",null);
+        JSONObject rememberAccount = new JSONObject();
+        rememberAccount.put("登陆名",register.getLoginName());
+        rememberAccount.put("登陆密码",register.getLoginPassword());
         return BaseResult.builder()
                 .code(register==null?0:1)
                 .msg("注册成功，请牢记您的账户信息。（现在并没有账户找回功能）")
-                .data(register).build();
+                .data(rememberAccount).build();
     }
 
     /**

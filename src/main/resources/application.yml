@@ -39,6 +39,6 @@ aliyun:
 
 math:
   invitation_mode: true
-  bank_full_limit: 100
+  bank_full_limit: 300
 
 
