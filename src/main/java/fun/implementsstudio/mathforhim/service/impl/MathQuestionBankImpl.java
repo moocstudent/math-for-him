@@ -5,6 +5,7 @@ import fun.implementsstudio.mathforhim.bo.GetQuestionsBo;
 import fun.implementsstudio.mathforhim.dao.MathQuestionRepository;
 import fun.implementsstudio.mathforhim.entity.MathQuestion;
 import fun.implementsstudio.mathforhim.enums.QuestionEnums;
+import fun.implementsstudio.mathforhim.manager.MathQuestionManager;
 import fun.implementsstudio.mathforhim.service.IMathQuestionBank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ import java.util.stream.LongStream;
 public class MathQuestionBankImpl implements IMathQuestionBank {
     @Autowired
     private MathQuestionRepository mathQuestionRepository;
+    @Autowired
+    private MathQuestionManager mathQuestionManager;
 
     @Override
     public Long addQuestion(MathQuestion mathQuestion) {
@@ -97,7 +100,9 @@ public class MathQuestionBankImpl implements IMathQuestionBank {
         List<MathQuestion> matchSizeQs = questions.stream().limit(size).collect(Collectors.toList());
         List<MathQuestion> theOwnerMathQuestions = matchSizeQs.stream().peek(q -> q.setMemberId(memberId)).collect(Collectors.toList());
         log.info("theOwnerMathQuestions to save right now size is :{}",theOwnerMathQuestions.size());
-        Iterable<MathQuestion> mathQuestions = mathQuestionRepository.saveAll(theOwnerMathQuestions);
+        //execution async operation
+        mathQuestionManager.saveQuestionListAsync(theOwnerMathQuestions);
+//        Iterable<MathQuestion> mathQuestions = mathQuestionRepository.saveAll(theOwnerMathQuestions);
         return true;
     }
 

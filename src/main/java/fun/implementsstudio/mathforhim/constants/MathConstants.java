@@ -10,6 +10,7 @@ import java.util.List;
 @Component
 public class MathConstants {
 
+    public static String MATH_GEN_PREFIX = "MATH-GENERATE:";
     public static String MATH_CODE_PREFIX = "MATH-";
     public static List<String> invitationCodeList = null;
     @PostConstruct
