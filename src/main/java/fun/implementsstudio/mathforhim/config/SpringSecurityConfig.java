@@ -51,6 +51,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/register").permitAll().antMatchers("/").permitAll().and().logout().logoutUrl("/auth/doLogout").logoutSuccessUrl("/").permitAll()
                 .and()
                 .sessionManagement()
+                .enableSessionUrlRewriting(true)
                 // 失效后跳转到登陆页面
                 .invalidSessionUrl("/");
 

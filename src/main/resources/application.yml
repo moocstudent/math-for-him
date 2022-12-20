@@ -1,13 +1,21 @@
 spring:
-  kafka:
-    bootstrap-servers: 192.168.200.111:9092
-    consumer:
-      group-id: lzhpo
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+      bindings:
+        output: # 输出通道
+          destination: kafka-stream-topic-test  # 对应的topic
+          contentType: application/json
+        input:
+          destination: kafka-stream-topic-test
+          contentType: application/json
+          group: kafka-stream-test # 指定消费者组
+          autoRebalanceEnabled: true # 分区负载
+          instanceCount: 3
+
+
 # 人间业火 烧不尽我
   #  security:
 #    user:
@@ -39,6 +47,9 @@ spring:
 
 
 server:
+  servlet:
+    session:
+      tracking-modes: cookie
   port: 80
 
 aliyun:
@@ -49,6 +60,11 @@ aliyun:
 
 math:
   invitation_mode: true
-  bank_full_limit: 300
+  bank_full_limit: 30000
+  kafka_save_active: true
 
 
+logging:
+  level:
+    root: info
+    org.apache.kafka: warn
