@@ -1,5 +1,15 @@
 spring:
-#  security:
+  kafka:
+    bootstrap-servers: 192.168.200.111:9092
+    consumer:
+      group-id: lzhpo
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+# 人间业火 烧不尽我
+  #  security:
 #    user:
 #      name: zhangjunyang
 #      password: 666666
