@@ -11,9 +11,6 @@
     <script>
 <!--    big -->
 
-
-
-
     </script>
     <style>
         body{text-align:center;}
@@ -84,7 +81,6 @@
     var correctAudio = new Audio('/mp3/correct.mp3');
     var wrongAudio = new Audio('/mp3/wrong.mp3');
     var completedAudio = new Audio('/mp3/completed.wav');
-
     $('#answerNegative').change(negativeSelect);
     function negativeSelect(){
          console.log('select negative or not in answers.');
@@ -93,7 +89,6 @@
         }else{
             window.location = changeURLPar(window.location.href,'answerNegative',negativeSet);
         }
-
     }
     $('#maxLimitAdjustBtn').click(maxLimitAdjustFc);
     function maxLimitAdjustFc(){
@@ -132,7 +127,6 @@
         console.log("answerjun:"+answerjun);
         var answer = $("#answer"+id).text(); // the last move ...
         console.log("answer:"+answer);
-
         if(parseFloat(answerjun)==parseFloat(answer)){
             console.log("He is correct!");
             //playing music and shown the answer !
@@ -141,14 +135,34 @@
             $("#confirm"+id).hide();
             var jug = iterateTableJugIsComplete();
             console.log('jug:'+jug);
+            answerToRecords(id,true);
             if(jug){
              completedAudio.play();
              popText();
             }
         }else{
             console.log("Wrong answer! Sooo sadly!");
+            answerToRecords(id,false);
             wrongAudio.play();
         }
+    }
+
+    function answerToRecords(questionId,isRight){
+          $.ajax({
+            url:"/records/makeRecords?"+"questionId="+questionId+"&isRight="+isRight,
+            type:"get",
+            success:function(data){
+             if(data.code==1){
+                console.log("records ok");
+             }else{
+                console.log("records failed");
+                console.log(data.msg);
+             }
+            },
+            error: function (errormessage) {
+              console.log('onerror:'+JSON.stringify(errormessage));
+            }
+        })
     }
 
     function iterateTableJugIsComplete(){
