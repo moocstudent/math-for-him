@@ -30,10 +30,10 @@ PRIMARY KEY (`id`) USING BTREE
 -- 统计会员的答题情况，并结合答题情况展示做题的echarts统计结果
 create table member_answer_records(
     `id` int(11) NOT NULL AUTO_INCREMENT,
-    `member_answer` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT "",
     `question_id` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT "",
-    `is_match` int(3) NOT NULL,
-    `member_id` varchar(300) NULL,
+    `wrong_count` bigint(10) NULL DEFAULT 0,
+    `right_count` bigint(10) NULL DEFAULT 0,
+    `member_id` varchar(300) NOT NULL,
     `create_time` timestamp(0) NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` timestamp(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
 PRIMARY KEY (`id`) USING BTREE

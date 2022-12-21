@@ -40,7 +40,7 @@ public class MathQuestion extends BaseEntity implements Serializable {
     private String type;
 
     /**
-     * 会员id，即绑定哪些题是哪些用户出的
+     * 会员id，即绑定哪些题是哪些用户出的 之后可以乱序 比如会员1做会员2的题目
      */
     private String memberId;
 

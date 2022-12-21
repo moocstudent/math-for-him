@@ -22,17 +22,14 @@ import java.io.Serializable;
 @Table(name = "member_answer_records")
 public class MemberAnswerRecords extends BaseEntity implements Serializable {
 
-    //用户答案
-    private String memberAnswer;
-
     //原问题id
     private String questionId;
-
-    //结果是否匹配
-    private Integer isMatch;
-
+    //统计错误次数
+    private Long wrongCount;
+    //统计回答正确次数
+    private Long rightCount;
     /**
-     * 虽然出题人是在题目中绑定了 但说不准之后可以乱序哦
+     * 会员id
      */
     private String memberId;
 
