@@ -2,6 +2,7 @@ package fun.implementsstudio.mathforhim.controller;
 
 
 import fun.implementsstudio.mathforhim.bo.AnswerRecordsBo;
+import fun.implementsstudio.mathforhim.bo.AnswerRecordsSearchBo;
 import fun.implementsstudio.mathforhim.result.BaseResult;
 import fun.implementsstudio.mathforhim.service.IMemberAnswerRecordsService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import java.util.Objects;
 public class MemberRecordsController {
     @Autowired
     private IMemberAnswerRecordsService memberAnswerRecordsService;
+
     @GetMapping("/makeRecords")
     public BaseResult makeRecords(AnswerRecordsBo answerRecordsBo, HttpSession session){
         Object memberId = session.getAttribute("memberId");
@@ -37,6 +39,25 @@ public class MemberRecordsController {
             }else{
                 return BaseResult.builder().code(0).msg("failed").build();
             }
+        } catch (Exception e) {
+            return BaseResult.builder().code(0).msg("exception").build();
+        }
+    }
+
+    @GetMapping("/searchRecords")
+    public BaseResult searchRecords(AnswerRecordsSearchBo searchBo,HttpSession session){
+        Object memberId = session.getAttribute("memberId");
+        if (Objects.isNull(memberId)){
+            //用户未登陆则不能生成题目
+            return BaseResult.builder().code(0).build();
+        }
+        Object records = null;
+        try {
+            records = memberAnswerRecordsService.searchRecords(searchBo, String.valueOf(memberId));
+            if (Objects.isNull(records)){
+                return BaseResult.builder().code(0).data(null).msg("found null").build();
+            }
+            return BaseResult.builder().code(1).data(records).msg("get records").build();
         } catch (Exception e) {
             return BaseResult.builder().code(0).msg("exception").build();
         }

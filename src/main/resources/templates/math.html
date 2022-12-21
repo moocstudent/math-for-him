@@ -148,6 +148,7 @@
     }
 
     function answerToRecords(questionId,isRight){
+        console.log("answer to records questionId"+questionId+",isRight"+isRight);
           $.ajax({
             url:"/records/makeRecords?"+"questionId="+questionId+"&isRight="+isRight,
             type:"get",

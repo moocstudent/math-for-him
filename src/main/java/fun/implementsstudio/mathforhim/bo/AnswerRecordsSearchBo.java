@@ -1,22 +1,16 @@
 package fun.implementsstudio.mathforhim.bo;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * 较量 往往就在刹那之间
- * 以低的姿态 讲最高的话
- */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class AnswerRecordsBo {
-    //问题id
+public class AnswerRecordsSearchBo {
+    //如果questionId不为空，则查一个题目的答题记录，否则查该会员的答题记录集体
+    //整体转换为图表统计
     private String questionId;
-    //是否答对
-    private boolean isRight;
 }

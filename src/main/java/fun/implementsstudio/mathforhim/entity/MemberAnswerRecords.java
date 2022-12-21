@@ -33,4 +33,7 @@ public class MemberAnswerRecords extends BaseEntity implements Serializable {
      */
     private String memberId;
 
+    //题目类型 需要获取
+    private String type;
+
 }
