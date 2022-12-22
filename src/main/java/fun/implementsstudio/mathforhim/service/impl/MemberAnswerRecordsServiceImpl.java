@@ -2,12 +2,14 @@ package fun.implementsstudio.mathforhim.service.impl;
 
 import fun.implementsstudio.mathforhim.bo.AnswerRecordsBo;
 import fun.implementsstudio.mathforhim.bo.AnswerRecordsSearchBo;
+import fun.implementsstudio.mathforhim.entity.MemberAnswerRecords;
 import fun.implementsstudio.mathforhim.manager.MemberAnswerRecordsManager;
 import fun.implementsstudio.mathforhim.service.IMemberAnswerRecordsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -21,9 +23,11 @@ public class MemberAnswerRecordsServiceImpl implements IMemberAnswerRecordsServi
         log.info("answer records save begin");
         Long updateOrCreateCount = null;
         try {
-            updateOrCreateCount = memberAnswerRecordsManager.updateOrCreateCount(answerRecordsBo.getQuestionId(),
+            updateOrCreateCount
+                    = memberAnswerRecordsManager.updateOrCreateCount(answerRecordsBo.getQuestionId(),
                     memberId,
-                    answerRecordsBo.isRight());
+                    answerRecordsBo.getIsRight(),
+                    answerRecordsBo.getType());
         } catch (Exception e) {
             return false;
         }
@@ -34,7 +38,9 @@ public class MemberAnswerRecordsServiceImpl implements IMemberAnswerRecordsServi
     }
 
     @Override
-    public Object searchRecords(AnswerRecordsSearchBo searchBo, String memberId) {
-        return memberAnswerRecordsManager.findRecordsByConditions(searchBo.getQuestionId(),memberId);
+    public List<MemberAnswerRecords> searchRecords(AnswerRecordsSearchBo searchBo, String memberId) {
+        return memberAnswerRecordsManager.findRecordsByConditions2(searchBo.getQuestionId(),
+                searchBo.getType(),
+                memberId);
     }
 }

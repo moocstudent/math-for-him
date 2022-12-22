@@ -1,6 +1,7 @@
 package fun.implementsstudio.mathforhim.entity;
 
 import lombok.*;
+import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -33,7 +34,7 @@ public class MemberAnswerRecords extends BaseEntity implements Serializable {
      */
     private String memberId;
 
-    //todo 题目类型 需要获取
+    //题目类型 需要获取
     private String type;
 
 }

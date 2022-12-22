@@ -34,6 +34,7 @@ create table member_answer_records(
     `wrong_count` bigint(10) NULL DEFAULT 0,
     `right_count` bigint(10) NULL DEFAULT 0,
     `member_id` varchar(300) NOT NULL,
+    `type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT "",
     `create_time` timestamp(0) NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` timestamp(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
 PRIMARY KEY (`id`) USING BTREE

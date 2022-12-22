@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -27,15 +28,22 @@ public class MemberAnswerRecordsManager {
      * @param isRight
      * @return
      */
-    public Long updateOrCreateCount(String questionId,String memberId,boolean isRight){
+    public Long updateOrCreateCount(String questionId,String memberId,boolean isRight,String type){
+        log.info("isRight:{}",isRight);
         MemberAnswerRecords answerRecords
                 = memberAnswerRecordsRepository.findByQuestionIdAndMemberId(questionId, memberId);
         if (Objects.isNull(answerRecords)){
             MemberAnswerRecords records = MemberAnswerRecords.builder()
                     .questionId(questionId)
                     .memberId(memberId)
+                    /**
+                     * 人生犹如下棋，落棋不悔
+                     * 职业发展犹如逆水行舟，不进则退
+                     */
+                    .type(type)
                     .build();
             if (isRight){
+                log.info("set right count 1");
                 records.setRightCount(1L);
             }else{
                 records.setWrongCount(1L);
@@ -44,9 +52,10 @@ public class MemberAnswerRecordsManager {
             return save.getId();
         }
         if (isRight){
-            answerRecords.setRightCount(answerRecords.getRightCount()+1);
+            log.info("set right count +1");
+            answerRecords.setRightCount((answerRecords.getRightCount()==null?0:answerRecords.getRightCount())+1);
         }else{
-            answerRecords.setWrongCount(answerRecords.getWrongCount()+1);
+            answerRecords.setWrongCount((answerRecords.getWrongCount()==null?0:answerRecords.getWrongCount())+1);
         }
         MemberAnswerRecords save = memberAnswerRecordsRepository.save(answerRecords);
         return save.getId();
@@ -65,6 +74,14 @@ public class MemberAnswerRecordsManager {
         }
         return memberAnswerRecordsRepository.findByQuestionIdAndMemberId(questionId, memberId);
     }
+
+    public List<MemberAnswerRecords> findRecordsByConditions2(String questionId, String type, String memberId){
+       return memberAnswerRecordsRepository.findByQIdTypeAndMemberIdNative(questionId,type,memberId);
+    }
+
+
+
+
     /**
      * 有些人不会讲话会吃多大亏
      * 有些人太会讲话会吃多大亏

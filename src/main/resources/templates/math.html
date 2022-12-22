@@ -60,6 +60,7 @@
         <td th:text="${q.id}" hidden="hidden"></td>
         <td><input th:id="answerjun+${q.id}" style="height:50;border-radius:10px" type="number"/></td>
         <td th:id="answer+${q.id}" th:text="${q.answer}" hidden="hidden" ></td>
+        <td th:id="type+${q.id}" th:text="${q.type}" hidden="hidden" ></td>
         <td><input th:id="confirm+${q.id}" style="height:30px;border-radius:10px" type="button" value="确认结果"
                    th:onclick="'javascript:matchResult('+${q.id}+');'"/></td>
     </tr>
@@ -127,6 +128,8 @@
         console.log("answerjun:"+answerjun);
         var answer = $("#answer"+id).text(); // the last move ...
         console.log("answer:"+answer);
+        var type = $("#type"+id).text(); // never the less, keep moving ...
+        console.log("type:"+type);
         if(parseFloat(answerjun)==parseFloat(answer)){
             console.log("He is correct!");
             //playing music and shown the answer !
@@ -135,22 +138,21 @@
             $("#confirm"+id).hide();
             var jug = iterateTableJugIsComplete();
             console.log('jug:'+jug);
-            answerToRecords(id,true);
+            answerToRecords(id,1,type);
             if(jug){
              completedAudio.play();
              popText();
             }
         }else{
             console.log("Wrong answer! Sooo sadly!");
-            answerToRecords(id,false);
+            answerToRecords(id,0,type);
             wrongAudio.play();
         }
     }
 
-    function answerToRecords(questionId,isRight){
-        console.log("answer to records questionId"+questionId+",isRight"+isRight);
+    function answerToRecords(questionId,isRight,type){
           $.ajax({
-            url:"/records/makeRecords?"+"questionId="+questionId+"&isRight="+isRight,
+            url:"/records/makeRecords?"+"questionId="+questionId+"&isRight="+isRight+"&type="+type,
             type:"get",
             success:function(data){
              if(data.code==1){

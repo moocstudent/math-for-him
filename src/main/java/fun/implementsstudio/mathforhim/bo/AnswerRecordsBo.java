@@ -18,5 +18,7 @@ public class AnswerRecordsBo {
     //问题id
     private String questionId;
     //是否答对
-    private boolean isRight;
+    private Boolean isRight;
+    //题目类型
+    private String type;
 }

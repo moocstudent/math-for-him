@@ -3,15 +3,18 @@ package fun.implementsstudio.mathforhim.controller;
 
 import fun.implementsstudio.mathforhim.bo.AnswerRecordsBo;
 import fun.implementsstudio.mathforhim.bo.AnswerRecordsSearchBo;
+import fun.implementsstudio.mathforhim.entity.MemberAnswerRecords;
 import fun.implementsstudio.mathforhim.result.BaseResult;
 import fun.implementsstudio.mathforhim.service.IMemberAnswerRecordsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -51,13 +54,13 @@ public class MemberRecordsController {
             //用户未登陆则不能生成题目
             return BaseResult.builder().code(0).build();
         }
-        Object records = null;
+        List<MemberAnswerRecords> records = null;
         try {
             records = memberAnswerRecordsService.searchRecords(searchBo, String.valueOf(memberId));
-            if (Objects.isNull(records)){
-                return BaseResult.builder().code(0).data(null).msg("found null").build();
+            if (CollectionUtils.isEmpty(records)){
+                return BaseResult.builder().code(0).data(null).msg("found empty").build();
             }
-            return BaseResult.builder().code(1).data(records).msg("get records").build();
+            return BaseResult.builder().code(1).data(records).msg("get re   cords").build();
         } catch (Exception e) {
             return BaseResult.builder().code(0).msg("exception").build();
         }
