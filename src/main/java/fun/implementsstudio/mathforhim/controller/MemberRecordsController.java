@@ -60,7 +60,7 @@ public class MemberRecordsController {
             if (CollectionUtils.isEmpty(records)){
                 return BaseResult.builder().code(0).data(null).msg("found empty").build();
             }
-            return BaseResult.builder().code(1).data(records).msg("get re   cords").build();
+            return BaseResult.builder().code(1).data(records).msg("get records").build();
         } catch (Exception e) {
             return BaseResult.builder().code(0).msg("exception").build();
         }

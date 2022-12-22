@@ -68,3 +68,5 @@ logging:
   level:
     root: info
     org.apache.kafka: warn
+
+# 每个人都有TA自己的脾气，收敛住，就是成熟的表现
