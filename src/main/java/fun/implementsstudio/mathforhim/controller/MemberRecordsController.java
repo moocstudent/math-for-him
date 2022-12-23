@@ -94,6 +94,11 @@ public class MemberRecordsController {
 
     @GetMapping("")
     public String recordsView(Model model,HttpSession session){
+        Object memberId = session.getAttribute("memberId");
+        if (Objects.isNull(memberId)){
+            //用户未登陆则不能生成题目
+            return "redirect:/";
+        }
         return "records";
     }
 

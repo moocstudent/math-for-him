@@ -64,8 +64,8 @@ myChart.showLoading();
  myChart.hideLoading(); //数据data加载后隐藏loading
                 console.log("search records ok");
 
-                setCustomOption(questionsData,rightCountMax,wrongCountMax,
-rightCountArr,wrongCountArr);
+                setCustomOption(data.data.questionsData,data.data.rightCountMax,
+                data.data.wrongCountMax,data.data.rightCountArr,data.data.wrongCountArr);
 
              }else{
                 console.log("records failed");

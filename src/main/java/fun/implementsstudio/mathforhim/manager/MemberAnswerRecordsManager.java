@@ -94,7 +94,10 @@ public class MemberAnswerRecordsManager {
     public MemberAnswerRecordsEchartsVo findEchartsDataVo(String questionId,
                                                           String type,
                                                           String memberId){
-        List<Object[]> datas = memberAnswerRecordsRepository.findEchartsDatasByConditions(questionId, type, memberId);
+        log.info("findEchartsDataVo questionId:{} type:{} memberId:{}",questionId,type,memberId);
+
+        List<Object[]> datas = memberAnswerRecordsRepository.findEchartsDatasByConditions(memberId);
+        log.info("datas:{}",datas);
         if (CollectionUtils.isEmpty(datas)){
             return MemberAnswerRecordsEchartsVo.builder()
                     .questionsData(Collections.emptyList())
@@ -132,3 +135,4 @@ public class MemberAnswerRecordsManager {
 
     }
 }
+

@@ -27,15 +27,18 @@ public interface MemberAnswerRecordsRepository extends BaseRepository<MemberAnsw
             @Param("type") String type,
             @Param("memberId") String memberId);
 
-    @Query(nativeQuery = true,value = "" +
-            "select q.question,r.right_count,r.wrong_count from " +
-            "(select rs.question_id,rs.right_count,rs.wrong_count,rs.create_time from member_answer_records rs " +
-            "where if(IFNULL(:questionId,'') !='',rs.question_id=:questionId,1=1) " +
-            "and if(IFNULL(:type,'') !='',rs.type=:type,1=1) " +
-            "and if(IFNULL(:memberId,'') !='',rs.member_id=:memberId,1=1)) r  " +
+    @Query(value = "select q.question,r.right_count,r.wrong_count from " +
+            "(select rs.question_id,rs.right_count,rs.wrong_count,rs.create_time " +
+            "from member_answer_records rs " +
+            "where 1=1 " +
+//            "and if(:questionId !='',rs.question_id=:questionId,1=1) " +
+//            "and if(:type !='',rs.type=:type,1=1) " +
+            "and rs.member_id=:memberId) r " +
             "left join math_question_bank q on r.question_id = q.id " +
-            "order by r.create_time desc")
-    List<Object[]> findEchartsDatasByConditions(@Param("questionId")String questionId,
-                                                @Param("type") String type,
+            "order by r.create_time desc",nativeQuery = true)
+    List<Object[]> findEchartsDatasByConditions(
+//            @Param("questionId")String questionId,
+//                                                @Param("type") String type,
                                                 @Param("memberId") String memberId);
+
 }

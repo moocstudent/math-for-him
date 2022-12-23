@@ -44,6 +44,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/dbUser").hasAuthority("dbUser")
                 .antMatchers("math.html").authenticated()
+                .antMatchers("records.html").authenticated()
                 // swagger start
                 .antMatchers("/swagger-ui.html").permitAll().antMatchers("/swagger-resources/**").permitAll().antMatchers("/webjars/**").permitAll().antMatchers("/v2/api-docs").permitAll()
                 // swagger end

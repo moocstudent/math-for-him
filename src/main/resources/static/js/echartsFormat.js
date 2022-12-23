@@ -205,13 +205,13 @@ function getSeriesContent(size, typeIn, seriesLayout) {
     }
     return contentArr;
 }
-
-funtion getLabelRightDataFromValues(values){
+//todo
+function getLabelRightDataFromValues(values){
     var rightDataArr = [];
     for(var i=0;i<values.length;i++){
-        if
         rightDataArr.push({})
     }
+    return rightDataArr;
 }
 
 
