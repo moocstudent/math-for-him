@@ -29,7 +29,7 @@ public interface MemberAnswerRecordsRepository extends BaseRepository<MemberAnsw
 
     @Query(nativeQuery = true,value = "" +
             "select q.question,r.right_count,r.wrong_count from " +
-            "(select rs.question_id,rs.right_count,rs.wrong_count from member_answer_records rs " +
+            "(select rs.question_id,rs.right_count,rs.wrong_count,rs.create_time from member_answer_records rs " +
             "where if(IFNULL(:questionId,'') !='',rs.question_id=:questionId,1=1) " +
             "and if(IFNULL(:type,'') !='',rs.type=:type,1=1) " +
             "and if(IFNULL(:memberId,'') !='',rs.member_id=:memberId,1=1)) r  " +
