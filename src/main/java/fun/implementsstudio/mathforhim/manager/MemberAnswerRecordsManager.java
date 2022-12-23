@@ -2,12 +2,17 @@ package fun.implementsstudio.mathforhim.manager;
 
 import fun.implementsstudio.mathforhim.dao.MemberAnswerRecordsRepository;
 import fun.implementsstudio.mathforhim.entity.MemberAnswerRecords;
+import fun.implementsstudio.mathforhim.vo.MemberAnswerRecordsEchartsVo;
+import io.lettuce.core.dynamic.annotation.Param;
 import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -86,4 +91,44 @@ public class MemberAnswerRecordsManager {
      * 有些人不会讲话会吃多大亏
      * 有些人太会讲话会吃多大亏
      */
+    public MemberAnswerRecordsEchartsVo findEchartsDataVo(String questionId,
+                                                          String type,
+                                                          String memberId){
+        List<Object[]> datas = memberAnswerRecordsRepository.findEchartsDatasByConditions(questionId, type, memberId);
+        if (CollectionUtils.isEmpty(datas)){
+            return MemberAnswerRecordsEchartsVo.builder()
+                    .questionsData(Collections.emptyList())
+                    .rightCountArr(Collections.emptyList())
+                    .wrongCountArr(Collections.emptyList())
+                    .rightCountMax(0)
+                    .wrongCountMax(0)
+                    .build();
+        }
+        List<String> questionsData = new ArrayList<>();
+        List<Integer> rightCountArr = new ArrayList<>();
+        List<Integer> wrongCountArr = new ArrayList<>();
+        for (Object[] data : datas) {
+            for(int i=0;i<3;i++){
+                Object datum = data[i];
+                if (i==0){
+                    boolean b = Objects.isNull(datum) ? questionsData.add("") :
+                            questionsData.add(String.valueOf(datum));
+                }else if(i==1){
+                    boolean b = Objects.isNull(datum) ? rightCountArr.add(0) :
+                            rightCountArr.add(Integer.valueOf(String.valueOf(datum)));
+                }else if(i==2){
+                    boolean b = Objects.isNull(datum) ? wrongCountArr.add(0) :
+                            wrongCountArr.add(Integer.valueOf(String.valueOf(datum)));
+                }
+            }
+        }
+        return MemberAnswerRecordsEchartsVo.builder()
+                .questionsData(questionsData)
+                .rightCountArr(rightCountArr)
+                .wrongCountArr(wrongCountArr)
+                .rightCountMax(rightCountArr.stream().max((a,b)->a-b).orElse(0))
+                .wrongCountMax(wrongCountArr.stream().max((a,b)->a-b).orElse(0))
+                .build();
+
+    }
 }

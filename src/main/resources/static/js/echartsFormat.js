@@ -206,6 +206,14 @@ function getSeriesContent(size, typeIn, seriesLayout) {
     return contentArr;
 }
 
+funtion getLabelRightDataFromValues(values){
+    var rightDataArr = [];
+    for(var i=0;i<values.length;i++){
+        if
+        rightDataArr.push({})
+    }
+}
+
 
 /**
  * 填充ECharts dataset:source的数据形式

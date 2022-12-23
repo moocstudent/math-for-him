@@ -53,31 +53,147 @@
 <div id="main" style="width: 600px;height:400px;"></div>
 <script>
 
-var myChart = echarts.init(document.getElementById('main'));
-// 指定图表的配置项和数据
-var option = {
-title: {
-text: '答题正确率统计'
-},
-tooltip: {},
-legend: {
-data: ['销量']
-},
-xAxis: {
-data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
-},
-yAxis: {},
-series: [
-{
-name: '销量',
-type: 'bar',
-data: [5, 20, 36, 10, 10, 20]
-}
-]
-};
 
+function getRecordsAboutType(questionId,type){
+myChart.showLoading();
+      $.ajax({
+            url:"/records/echartsRecords?"+"questionId="+questionId+"&type="+type,
+            type:"get",
+            success:function(data){
+             if(data.code==1){
+ myChart.hideLoading(); //数据data加载后隐藏loading
+                console.log("search records ok");
+
+                setCustomOption(questionsData,rightCountMax,wrongCountMax,
+rightCountArr,wrongCountArr);
+
+             }else{
+                console.log("records failed");
+                console.log(data.msg);
+             }
+            },
+            error: function (errormessage) {
+              console.log('onerror:'+JSON.stringify(errormessage));
+            }
+        })
+}
+var myChart = echarts.init(document.getElementById('main'));
+function setCustomOption(questionsData,rightCountMax,wrongCountMax,
+rightCountArr,wrongCountArr){
+// 指定图表的配置项和数据
+option = {
+  title: {
+    text: '答题对错统计表',
+    left: 'center'
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      animation: false
+    }
+  },
+  legend: {
+    data: ['对', '错'],
+    left: 10
+  },
+  toolbox: {
+    feature: {
+      dataZoom: {
+        yAxisIndex: 'none'
+      },
+      restore: {},
+      saveAsImage: {}
+    }
+  },
+  axisPointer: {
+    link: [
+      {
+        xAxisIndex: 'all'
+      }
+    ]
+  },
+  dataZoom: [
+    {
+      show: true,
+      realtime: true,
+      start: 30,
+      end: 70,
+      xAxisIndex: [0, 1]
+    },
+    {
+      type: 'inside',
+      realtime: true,
+      start: 30,
+      end: 70,
+      xAxisIndex: [0, 1]
+    }
+  ],
+  grid: [
+    {
+      left: 60,
+      right: 50,
+      height: '35%'
+    },
+    {
+      left: 60,
+      right: 50,
+      top: '55%',
+      height: '35%'
+    }
+  ],
+  xAxis: [
+    {
+      type: 'category',
+      boundaryGap: false,
+      axisLine: { onZero: true },
+      data: questionsData
+    },
+    {
+      gridIndex: 1,
+      type: 'category',
+      boundaryGap: false,
+      axisLine: { onZero: true },
+      data: questionsData,
+      position: 'top'
+    }
+  ],
+  yAxis: [
+    {
+      name: '答对次数',
+      type: 'value',
+      max: rightCountMax
+    },
+    {
+      gridIndex: 1,
+      name: '答错次数',
+      type: 'value',
+      max: wrongCountMax,
+      inverse: true
+    }
+  ],
+  series: [
+    {
+      name: '对',
+      type: 'line',
+      symbolSize: 8,
+      // prettier-ignore
+      data: rightCountArr
+    },
+    {
+      name: '错',
+      type: 'line',
+      xAxisIndex: 1,
+      yAxisIndex: 1,
+      symbolSize: 8,
+      // prettier-ignore
+      data: wrongCountArr
+    }
+  ]
+}
 // 使用刚指定的配置项和数据显示图表。
 myChart.setOption(option);
+}
+getRecordsAboutType(null,null);
 
 </script>
 </body>

@@ -5,6 +5,7 @@ import fun.implementsstudio.mathforhim.bo.AnswerRecordsSearchBo;
 import fun.implementsstudio.mathforhim.entity.MemberAnswerRecords;
 import fun.implementsstudio.mathforhim.manager.MemberAnswerRecordsManager;
 import fun.implementsstudio.mathforhim.service.IMemberAnswerRecordsService;
+import fun.implementsstudio.mathforhim.vo.MemberAnswerRecordsEchartsVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,5 +43,12 @@ public class MemberAnswerRecordsServiceImpl implements IMemberAnswerRecordsServi
         return memberAnswerRecordsManager.findRecordsByConditions2(searchBo.getQuestionId(),
                 searchBo.getType(),
                 memberId);
+    }
+
+    @Override
+    public MemberAnswerRecordsEchartsVo recordsToEchartsDatas(AnswerRecordsSearchBo searchBo, String memberId) {
+        MemberAnswerRecordsEchartsVo echartsDataVo = memberAnswerRecordsManager.findEchartsDataVo(searchBo.getQuestionId(), searchBo.getType(), memberId);
+        log.info("echartsDataVo:{}",echartsDataVo);
+        return echartsDataVo;
     }
 }
