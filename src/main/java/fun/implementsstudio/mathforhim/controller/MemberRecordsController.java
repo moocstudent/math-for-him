@@ -72,6 +72,12 @@ public class MemberRecordsController {
         }
     }
 
+    /**
+     * 何曾想，她爸抽烟时，我也想骂人
+     * @param searchBo
+     * @param session
+     * @return
+     */
     @ResponseBody
     @GetMapping("/echartsRecords")
     public BaseResult echartsRecords(AnswerRecordsSearchBo searchBo,HttpSession session){
