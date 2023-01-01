@@ -10,13 +10,26 @@
 	</parent>
 	<groupId>fun.implementsstudio</groupId>
 	<artifactId>math-for-him</artifactId>
-	<version>v1.3</version>
+	<version>v1.4</version>
 	<name>math-for-him</name>
 	<description>mathforhim-junyang</description>
 	<properties>
 		<java.version>8</java.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.session</groupId>
+			<artifactId>spring-session-data-redis</artifactId>
+			<version>2.1.4.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2 -->
 		<dependency>
 			<groupId>com.alibaba.fastjson2</groupId>

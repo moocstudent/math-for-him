@@ -50,11 +50,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 // swagger end
                 .antMatchers("/auth/**").permitAll().antMatchers("/fun/**").permitAll().antMatchers("/login").permitAll()
                 .antMatchers("/register").permitAll().antMatchers("/").permitAll().and().logout().logoutUrl("/auth/doLogout").logoutSuccessUrl("/").permitAll()
-                .and()
-                .sessionManagement()
-                .enableSessionUrlRewriting(true)
+                ;
+//                .and()
+//                .sessionManagement()
+//                .enableSessionUrlRewriting(true)
                 // 失效后跳转到登陆页面
-                .invalidSessionUrl("/");
+//                .invalidSessionUrl("/");
 
         // 禁用缓存
 //        http.headers().cacheControl();

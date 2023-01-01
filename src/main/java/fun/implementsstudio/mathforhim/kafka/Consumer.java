@@ -3,7 +3,6 @@ package fun.implementsstudio.mathforhim.kafka;
 import com.alibaba.fastjson2.JSONObject;
 import fun.implementsstudio.mathforhim.dao.MathQuestionRepository;
 import fun.implementsstudio.mathforhim.entity.MathQuestion;
-import fun.implementsstudio.mathforhim.manager.MathQuestionManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;

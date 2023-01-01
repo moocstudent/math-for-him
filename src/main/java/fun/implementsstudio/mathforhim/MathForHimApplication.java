@@ -13,6 +13,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 @Controller
 @EnableJpaRepositories
 @Validated
+@EnableRedisHttpSession
 public class MathForHimApplication {
 
     public static void main(String[] args) {
@@ -104,6 +106,7 @@ public class MathForHimApplication {
     }
 
     /**
+     * 有目标 才能达成 更好地达成
      * 点外卖吃烧鸡 再来一个选择题
      *
      * @param model
